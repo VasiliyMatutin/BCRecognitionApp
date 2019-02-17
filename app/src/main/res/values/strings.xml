@@ -1,3 +1,11 @@
 <resources>
     <string name="app_name">BCRecognition</string>
+    <string name="scanning_header_message">Add a card</string>
+    <string name="scanning_help_message">Line it up with the frame</string>
+    <string name="scanning_button">Recognize</string>
+    <string name="camera_access_required">Application will close if permissions will not be granted. Request permissions?</string>
+    <string name="camera_access_required_title">Camera access is required to scan cards</string>
+    <string name="camera_access_error">Application cannot get an access to device camera. Exit</string>
+    <string name="ok">OK</string>
+    <string name="cancel">Cancel</string>
 </resources>
