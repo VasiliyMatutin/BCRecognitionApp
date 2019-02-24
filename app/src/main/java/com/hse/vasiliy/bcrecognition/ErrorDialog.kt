@@ -10,10 +10,10 @@ class ErrorDialog() : DialogFragment() {
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         return activity?.let {
             val builder = AlertDialog.Builder(activity)
-            builder.setMessage(arguments.getString(ERROR_MESSAGE))
+            builder.setMessage(arguments?.getString(ERROR_MESSAGE))
                 .setPositiveButton(android.R.string.ok
                 ) { _, _ ->
-                    activity.finish()
+                    activity?.finish()
                 }
             builder.create()
         } ?: throw IllegalStateException("Activity cannot be null")

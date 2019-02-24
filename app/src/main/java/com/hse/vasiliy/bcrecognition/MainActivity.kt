@@ -2,8 +2,9 @@ package com.hse.vasiliy.bcrecognition
 
 import android.Manifest
 import android.content.Context
+import android.content.Intent
 import android.content.pm.PackageManager
-import android.graphics.Rect
+import android.graphics.Bitmap
 import android.graphics.SurfaceTexture
 import android.hardware.camera2.*
 import android.os.Bundle
@@ -11,22 +12,20 @@ import android.os.Handler
 import android.os.HandlerThread
 import android.support.v4.content.ContextCompat
 
-import android.view.TextureView
 import android.support.v4.app.FragmentActivity
 import android.util.Log
-import android.view.Surface
-import android.view.View
-import android.view.Window
 import java.util.*
 import android.hardware.camera2.CaptureRequest
-
-
+import android.util.Size
+import android.view.*
 
 
 class MainActivity : FragmentActivity() {
 
     private lateinit var cameraView: TextureView
     private lateinit var mLayout: View
+    private lateinit var topBorder: View
+    private lateinit var lowerBorder: View
     private lateinit var cameraId: String
     //next two required by camera2 docs to perform huge camera tasks in separate thread
     private lateinit var backgroundThread: HandlerThread
@@ -59,6 +58,8 @@ class MainActivity : FragmentActivity() {
         this.requestWindowFeature(Window.FEATURE_NO_TITLE)
         setContentView(R.layout.activity_main)
         mLayout = findViewById(R.id.main_layout)
+        topBorder = findViewById(R.id.top_border)
+        lowerBorder = findViewById(R.id.lower_border)
 
         cameraView = findViewById(R.id.camera_view)
     }
@@ -77,6 +78,23 @@ class MainActivity : FragmentActivity() {
         closeCamera()
         stopBackgroundThread()
         super.onPause()
+    }
+
+    fun recognizeButtonClicked(view: View) {
+        val intent = Intent(this, RecognitionActivity::class.java)
+        val srcBitmap = cameraView.bitmap
+        val dstBmp = Bitmap.createBitmap(
+            srcBitmap,
+            0,
+            topBorder.height,
+            mLayout.width,
+            mLayout.height - topBorder.height - lowerBorder.height
+        )
+        val outStream = openFileOutput(BITMAP_TMP, Context.MODE_PRIVATE)
+        dstBmp.compress(Bitmap.CompressFormat.PNG, 0, outStream)
+        outStream.flush()
+        outStream.close()
+        startActivity(intent)
     }
 
     private val surfaceTextureListener = object : TextureView.SurfaceTextureListener {
