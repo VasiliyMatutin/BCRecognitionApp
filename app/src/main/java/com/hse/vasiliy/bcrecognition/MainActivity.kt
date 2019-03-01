@@ -153,7 +153,7 @@ class MainActivity : FragmentActivity() {
     }
 
     private fun setCameraSettings(width: Int,
-                                  height: Int){
+                                  height: Int){ //TODO: use device resolution for preview instead of const definition
         val mCameraManager = getSystemService(Context.CAMERA_SERVICE) as CameraManager
         try {
             //iterate trough all cameras available on this device
