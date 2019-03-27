@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">РаспознавательВизиток</string>
+    <string name="scanning_header_message">Добавьте визитку</string>
+    <string name="scanning_help_message">Полностью поместите визитку в кадр</string>
+    <string name="scanning_button">Считать информацию</string>
+    <string name="recognized_text_header">Считанная информация</string>
+    <string name="cancel">Отмена</string>
+    <string name="camera_access_error">Приложение не смогло получить доступ к камере. Завершение работы</string>
+    <string name="camera_access_required_title">Необходим доступ к камере и файловой системе устройства</string>
+    <string name="camera_access_required">Приложение будет закрыто, если доступ не будет предоставлен. Запросить доступ?</string>
+    <string name="card_preview_header">Предпросмотр отснятого кадра</string>
+    <string name="external_storage_error">"Приложение не обнаружило внешний носитель данных. Пожалуйста вставьте SD карту перед запуском приложения "</string>
+    <string name="ok">ОК</string>
+    <string name="empty_text">Текст не распознан</string>
+</resources>

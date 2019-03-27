@@ -8,8 +8,10 @@
     <string name="camera_access_required">Application will close if permissions will not be granted. Request
         permissions?
     </string>
-    <string name="camera_access_required_title">Camera access is required to scan cards</string>
+    <string name="camera_access_required_title">Camera and storage access is required</string>
     <string name="camera_access_error">Application cannot get an access to device camera. Exit</string>
     <string name="ok">OK</string>
     <string name="cancel">Cancel</string>
+    <string name="external_storage_error">Application cannot find external storage. Please insert SD card before it may continue</string>
+    <string name="empty_text">Text not detected</string>
 </resources>

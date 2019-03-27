@@ -16,8 +16,11 @@ import android.support.v4.app.FragmentActivity
 import android.util.Log
 import java.util.*
 import android.hardware.camera2.CaptureRequest
-import android.util.Size
+import android.os.Environment
 import android.view.*
+import java.io.File
+import java.io.FileOutputStream
+import java.io.IOException
 
 
 class MainActivity : FragmentActivity() {
@@ -60,8 +63,16 @@ class MainActivity : FragmentActivity() {
         mLayout = findViewById(R.id.main_layout)
         topBorder = findViewById(R.id.top_border)
         lowerBorder = findViewById(R.id.lower_border)
-
         cameraView = findViewById(R.id.camera_view)
+
+        //Need to request permission on first launch
+        if (ContextCompat.checkSelfPermission(applicationContext, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+            requestStartupPermission()
+        }
+
+        //Check that storage is available
+        checkExternalStorageWritable()
+        copyTesseractFilesOnStorage()
     }
 
     override fun onResume() {
@@ -106,15 +117,57 @@ class MainActivity : FragmentActivity() {
         }
     }
 
-    private fun loadCamera(width: Int,
-                           height: Int) {
-        //Need to request permission on first launch
-        if (ContextCompat.checkSelfPermission(applicationContext, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
-            requestCameraPermission()
-            return
+    private fun checkExternalStorageWritable() {
+        if (Environment.getExternalStorageState() != Environment.MEDIA_MOUNTED) {
+            ErrorDialog.newInstance(getString(R.string.external_storage_error))
+                .show(supportFragmentManager, ERROR_DIALOG)
+        }
+    }
+
+    private fun copyTesseractFilesOnStorage() {
+        //create tesseract directory if it still not exist
+        val dirName = "${applicationContext.getExternalFilesDir(null)}/$TESSERACT_SAMPLES_PATH"
+        val dir = File(dirName)
+        if (!dir.exists()) {
+            if (!dir.mkdirs()) {
+                ErrorDialog.newInstance(getString(R.string.external_storage_error))
+                    .show(supportFragmentManager, ERROR_DIALOG)
+            }
         }
 
+        //copy files itself
+        try {
+            val fileList = assets.list(TESSERACT_ASSETS)
+
+            for (fileName in fileList!!) {
+                val dst = "$dirName/$fileName"
+                if (!File(dst).exists()) {
+                    val input = assets.open("$TESSERACT_ASSETS/$fileName")
+                    val output = FileOutputStream(dst)
+                    val buf = ByteArray(1024)
+                    var len = input.read(buf)
+                    while (len > 0) {
+                        output.write(buf, 0, len)
+                        len = input.read(buf)
+                    }
+                    input.close()
+                    output.close()
+                }
+            }
+        } catch (e: IOException) {
+            ErrorDialog.newInstance(getString(R.string.external_storage_error))
+                .show(supportFragmentManager, ERROR_DIALOG)
+        }
+    }
+
+    private fun loadCamera(width: Int,
+                           height: Int) {
         setCameraSettings(width, height)
+
+        if (ContextCompat.checkSelfPermission(applicationContext, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+            requestStartupPermission()
+            return
+        }
 
         val mCameraManager = getSystemService(Context.CAMERA_SERVICE) as CameraManager
         mCameraManager.openCamera(cameraId, cameraCallbacks, backgroundHandler)
@@ -127,13 +180,17 @@ class MainActivity : FragmentActivity() {
         mCameraDevice = null
     }
 
-    private fun requestCameraPermission() {
-        if (shouldShowRequestPermissionRationale(Manifest.permission.CAMERA)) {
-            CameraAccessConfirmationDialog().apply { isCancelable = false }.show(supportFragmentManager, CONFIRMATION_DIALOG)
+    private fun requestStartupPermission() {
+        if (shouldShowRequestPermissionRationale(Manifest.permission.CAMERA)
+            || shouldShowRequestPermissionRationale(Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+            PermissionRequestConfirmationDialog().apply { isCancelable = false }.show(supportFragmentManager, CONFIRMATION_DIALOG)
         } else {
             requestPermissions(
-                arrayOf(Manifest.permission.CAMERA),
-                REQUEST_CAMERA_PERMISSION)
+                arrayOf(
+                    Manifest.permission.CAMERA,
+                    Manifest.permission.WRITE_EXTERNAL_STORAGE
+                ),
+                REQUEST_STARTUP_PERMISSIONS)
         }
     }
 
@@ -141,8 +198,16 @@ class MainActivity : FragmentActivity() {
                                             permissions: Array<String>,
                                             grantResults: IntArray) {
         when (requestCode) {
-            REQUEST_CAMERA_PERMISSION -> {
-                if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+            REQUEST_STARTUP_PERMISSIONS -> {
+                var permissionGranted = true
+                for (i in grantResults.indices){
+                    if (grantResults[i] != PackageManager.PERMISSION_GRANTED)
+                    {
+                        permissionGranted = false
+                        break
+                    }
+                }
+                if (permissionGranted) {
                     super.onRequestPermissionsResult(requestCode, permissions, grantResults)
                 } else {
                     ErrorDialog.newInstance(getString(R.string.camera_access_error))
