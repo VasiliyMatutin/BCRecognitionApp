@@ -11,6 +11,13 @@
     <string name="camera_access_required">Приложение будет закрыто, если доступ не будет предоставлен. Запросить доступ?</string>
     <string name="card_preview_header">Предпросмотр отснятого кадра</string>
     <string name="external_storage_error">"Приложение не обнаружило внешний носитель данных. Пожалуйста вставьте SD карту перед запуском приложения "</string>
-    <string name="ok">ОК</string>
     <string name="empty_text">Текст не распознан</string>
+    <string name="camera_configure_error">Не удалось задать конфигурацию камеры</string>
+    <string name="camera_activity_menu_entry">Распознавание</string>
+    <string name="saved_unrecognized_cards">Галлерея визиток</string>
+    <string name="communicate">Рассказать о нас</string>
+    <string name="share">Поделиться</string>
+    <string name="settings_activity_menu_entry">Настройки</string>
+    <string name="tesseract_error">Ошибка в модуле распознавания</string>
+    <string name="image_description">description</string>
 </resources>

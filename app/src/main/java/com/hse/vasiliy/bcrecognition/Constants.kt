@@ -7,5 +7,7 @@ const val ERROR_DIALOG = "error_dialog"
 const val BITMAP_TMP = "bitmap"
 const val TESSERACT_SAMPLES_PATH = "tessdata"
 const val TESSERACT_ASSETS = "traindata"
+const val CAMERA_FRAGMENT_TAG = "CAMERA_FRAGMENT"
+const val RECOGNITION_FRAGMENT_TAG = "RECOGNITION_FRAGMENT"
 
 const val TAG = "logger"

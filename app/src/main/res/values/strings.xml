@@ -10,8 +10,18 @@
     </string>
     <string name="camera_access_required_title">Camera and storage access is required</string>
     <string name="camera_access_error">Application cannot get an access to device camera. Exit</string>
-    <string name="ok">OK</string>
+    <string name="ok" translatable="false">OK</string>
     <string name="cancel">Cancel</string>
     <string name="external_storage_error">Application cannot find external storage. Please insert SD card before it may continue</string>
     <string name="empty_text">Text not detected</string>
+    <string name="navigation_drawer_open" translatable="false">Open navigation drawer</string>
+    <string name="navigation_drawer_close" translatable="false">Close navigation drawer</string>
+    <string name="camera_configure_error">Camera configure failed</string>
+    <string name="camera_activity_menu_entry">Scan card</string>
+    <string name="saved_unrecognized_cards">Cards gallery</string>
+    <string name="communicate">Communicate</string>
+    <string name="share">Share</string>
+    <string name="settings_activity_menu_entry">Settings</string>
+    <string name="tesseract_error">Something goes wrong with recognition module</string>
+    <string name="image_description">description</string>
 </resources>

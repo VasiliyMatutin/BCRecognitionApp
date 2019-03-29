@@ -1,69 +1,51 @@
 package com.hse.vasiliy.bcrecognition
 
 import android.Manifest
-import android.content.Context
-import android.content.Intent
 import android.content.pm.PackageManager
-import android.graphics.Bitmap
-import android.graphics.SurfaceTexture
-import android.hardware.camera2.*
 import android.os.Bundle
-import android.os.Handler
-import android.os.HandlerThread
-import android.support.v4.content.ContextCompat
-
-import android.support.v4.app.FragmentActivity
-import android.util.Log
-import java.util.*
-import android.hardware.camera2.CaptureRequest
 import android.os.Environment
-import android.view.*
+import android.support.design.widget.NavigationView
+import android.support.v4.app.FragmentManager
+import android.support.v4.content.ContextCompat
+import android.support.v4.view.GravityCompat
+import android.support.v7.app.ActionBarDrawerToggle
+import android.support.v7.app.AppCompatActivity
+import android.view.MenuItem
+import android.widget.FrameLayout
+import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.app_bar_main.*
 import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
 
 
-class MainActivity : FragmentActivity() {
+class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
 
-    private lateinit var cameraView: TextureView
-    private lateinit var mLayout: View
-    private lateinit var topBorder: View
-    private lateinit var lowerBorder: View
-    private lateinit var cameraId: String
-    //next two required by camera2 docs to perform huge camera tasks in separate thread
-    private lateinit var backgroundThread: HandlerThread
-    private lateinit var backgroundHandler: Handler
-    private lateinit var previewRequestBuilder: CaptureRequest.Builder
-    private var mCameraDevice: CameraDevice? = null
-    private var captureSession: CameraCaptureSession? = null
-
-    //overridden callbacks for camera
-    private val cameraCallbacks = object : CameraDevice.StateCallback() {
-
-        override fun onOpened(cameraDevice: CameraDevice) {
-            mCameraDevice = cameraDevice
-            createCameraPreviewSession()
-        }
-
-        override fun onDisconnected(cameraDevice: CameraDevice) {
-            cameraDevice.close()
-            mCameraDevice = null
-        }
-
-        override fun onError(cameraDevice: CameraDevice, error: Int) {
-            onDisconnected(cameraDevice)
-            this@MainActivity.finish()
-        }
-    }
+    private lateinit var container: FrameLayout
+    private lateinit var fragmentManager: FragmentManager
+    private lateinit var cameraFragment: CameraFragment
+    private lateinit var recognitionFragment: RecognitionFragment
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        this.requestWindowFeature(Window.FEATURE_NO_TITLE)
         setContentView(R.layout.activity_main)
-        mLayout = findViewById(R.id.main_layout)
-        topBorder = findViewById(R.id.top_border)
-        lowerBorder = findViewById(R.id.lower_border)
-        cameraView = findViewById(R.id.camera_view)
+
+        container = findViewById(R.id.fragment_container)
+        fragmentManager = supportFragmentManager
+        val fragmentTransaction = fragmentManager.beginTransaction()
+        cameraFragment = CameraFragment()
+        recognitionFragment = RecognitionFragment()
+        fragmentTransaction.add(R.id.fragment_container, cameraFragment, CAMERA_FRAGMENT_TAG)
+        fragmentTransaction.commit()
+
+        setSupportActionBar(toolbar)
+        val toggle = ActionBarDrawerToggle(
+            this, drawer_layout, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close
+        )
+        drawer_layout.addDrawerListener(toggle)
+        toggle.syncState()
+
+        nav_view.setNavigationItemSelectedListener(this)
 
         //Need to request permission on first launch
         if (ContextCompat.checkSelfPermission(applicationContext, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
@@ -75,46 +57,32 @@ class MainActivity : FragmentActivity() {
         copyTesseractFilesOnStorage()
     }
 
-    override fun onResume() {
-        super.onResume()
-        startBackgroundThread()
-        if (cameraView.isAvailable) {
-            loadCamera(cameraView.width, cameraView.height)
+    override fun onBackPressed() {
+        if (drawer_layout.isDrawerOpen(GravityCompat.START)) {
+            drawer_layout.closeDrawer(GravityCompat.START)
         } else {
-            cameraView.surfaceTextureListener = surfaceTextureListener
+            super.onBackPressed()
         }
     }
 
-    override fun onPause() {
-        closeCamera()
-        stopBackgroundThread()
-        super.onPause()
-    }
+    override fun onNavigationItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
+            R.id.nav_camera -> {
+                openCamera()
+            }
+            R.id.nav_gallery -> {
 
-    fun recognizeButtonClicked(view: View) {
-        val intent = Intent(this, RecognitionActivity::class.java)
-        val srcBitmap = cameraView.bitmap
-        val dstBmp = Bitmap.createBitmap(
-            srcBitmap,
-            0,
-            topBorder.height,
-            mLayout.width,
-            mLayout.height - topBorder.height - lowerBorder.height
-        )
-        val outStream = openFileOutput(BITMAP_TMP, Context.MODE_PRIVATE)
-        dstBmp.compress(Bitmap.CompressFormat.PNG, 0, outStream)
-        outStream.flush()
-        outStream.close()
-        startActivity(intent)
-    }
+            }
+            R.id.nav_settings -> {
 
-    private val surfaceTextureListener = object : TextureView.SurfaceTextureListener {
-        override fun onSurfaceTextureSizeChanged(surface: SurfaceTexture?, width: Int, height: Int) = Unit
-        override fun onSurfaceTextureUpdated(surface: SurfaceTexture?) = Unit
-        override fun onSurfaceTextureDestroyed(surface: SurfaceTexture?) = true
-        override fun onSurfaceTextureAvailable(texture: SurfaceTexture, width: Int, height: Int) {
-            loadCamera(width, height)
+            }
+            R.id.nav_share -> {
+
+            }
         }
+
+        drawer_layout.closeDrawer(GravityCompat.START)
+        return true
     }
 
     private fun checkExternalStorageWritable() {
@@ -160,27 +128,33 @@ class MainActivity : FragmentActivity() {
         }
     }
 
-    private fun loadCamera(width: Int,
-                           height: Int) {
-        setCameraSettings(width, height)
-
-        if (ContextCompat.checkSelfPermission(applicationContext, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
-            requestStartupPermission()
-            return
+    private fun openCamera(){
+        val fragment : CameraFragment? = fragmentManager.findFragmentByTag(CAMERA_FRAGMENT_TAG) as CameraFragment?
+        if (fragment == null) {
+            val fragmentTransaction = fragmentManager.beginTransaction()
+            fragmentTransaction.replace(
+                R.id.fragment_container,
+                cameraFragment,
+                CAMERA_FRAGMENT_TAG
+            )
+            fragmentTransaction.commit()
         }
-
-        val mCameraManager = getSystemService(Context.CAMERA_SERVICE) as CameraManager
-        mCameraManager.openCamera(cameraId, cameraCallbacks, backgroundHandler)
     }
 
-    private fun closeCamera() {
-        captureSession?.close()
-        captureSession = null
-        mCameraDevice?.close()
-        mCameraDevice = null
+    fun openRecognition(){
+        val fragment : RecognitionFragment? = fragmentManager.findFragmentByTag(RECOGNITION_FRAGMENT_TAG) as RecognitionFragment?
+        if (fragment == null) {
+            val fragmentTransaction = fragmentManager.beginTransaction()
+            fragmentTransaction.replace(
+                R.id.fragment_container,
+                recognitionFragment,
+                RECOGNITION_FRAGMENT_TAG
+            )
+            fragmentTransaction.commit()
+        }
     }
 
-    private fun requestStartupPermission() {
+    fun requestStartupPermission() {
         if (shouldShowRequestPermissionRationale(Manifest.permission.CAMERA)
             || shouldShowRequestPermissionRationale(Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
             PermissionRequestConfirmationDialog().apply { isCancelable = false }.show(supportFragmentManager, CONFIRMATION_DIALOG)
@@ -217,83 +191,9 @@ class MainActivity : FragmentActivity() {
         }
     }
 
-    private fun setCameraSettings(width: Int,
-                                  height: Int){ //TODO: use device resolution for preview instead of const definition
-        val mCameraManager = getSystemService(Context.CAMERA_SERVICE) as CameraManager
-        try {
-            //iterate trough all cameras available on this device
-            for (camera in mCameraManager.cameraIdList) {
-                val mCharacteristics = mCameraManager.getCameraCharacteristics(camera)
-                val map = mCharacteristics.get(CameraCharacteristics.SCALER_STREAM_CONFIGURATION_MAP) ?: continue
-
-                val cameraFacing = mCharacteristics.get(CameraCharacteristics.LENS_FACING)
-                //skip all cameras that faces the same direction as the device's screen
-                if (cameraFacing != null && cameraFacing == CameraCharacteristics.LENS_FACING_FRONT) {
-                    continue
-                }
-
-                cameraId = camera
-            }
-        } catch (exc: CameraAccessException) {
-            ErrorDialog.newInstance(getString(R.string.camera_access_error))
-                .show(supportFragmentManager, ERROR_DIALOG)
-        }
+    fun showErrorByRequest(errorText: String) {
+        ErrorDialog.newInstance(errorText)
+            .show(supportFragmentManager, ERROR_DIALOG)
     }
 
-    private fun createCameraPreviewSession() {
-        try {
-
-            val cameraWindow = cameraView.surfaceTexture
-            cameraWindow.setDefaultBufferSize(1920, 1080) //TODO:eliminate const
-            val surface = Surface(cameraWindow)
-
-            previewRequestBuilder = mCameraDevice!!.createCaptureRequest(
-                CameraDevice.TEMPLATE_PREVIEW
-            )
-            previewRequestBuilder.addTarget(surface)
-
-            mCameraDevice?.createCaptureSession(
-                Arrays.asList(surface),
-                object : CameraCaptureSession.StateCallback() {
-
-                    override fun onConfigured(cameraCaptureSession: CameraCaptureSession) {
-                        if (mCameraDevice == null) return
-
-                        captureSession = cameraCaptureSession
-                        try {
-                            val previewRequest = previewRequestBuilder.build()
-                            captureSession?.setRepeatingRequest(previewRequest, null, backgroundHandler)
-                        } catch (e: CameraAccessException) {
-                            ErrorDialog.newInstance(getString(R.string.camera_access_error))
-                                .show(supportFragmentManager, ERROR_DIALOG)
-                        }
-
-                    }
-
-                    override fun onConfigureFailed(session: CameraCaptureSession) {
-                        //TODO:add error handler
-                    }
-                }, null)
-
-        } catch (exc: CameraAccessException) {
-            ErrorDialog.newInstance(getString(R.string.camera_access_error))
-                .show(supportFragmentManager, ERROR_DIALOG)
-        }
-    }
-
-    private fun startBackgroundThread() {
-        backgroundThread = HandlerThread("CameraHugeTasks")
-        backgroundThread.start()
-        backgroundHandler = Handler(backgroundThread.looper)
-    }
-
-    private fun stopBackgroundThread() {
-        backgroundThread.quitSafely()
-        try {
-            backgroundThread.join()
-        } catch (exc: InterruptedException) {
-            Log.e(TAG, exc.toString())
-        }
-
-    }
 }

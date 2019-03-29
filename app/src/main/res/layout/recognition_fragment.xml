@@ -5,7 +5,7 @@
         xmlns:app="http://schemas.android.com/apk/res-auto"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:context=".RecognitionActivity">
+        tools:context=".RecognitionFragment">
     <LinearLayout
             android:orientation="vertical"
             android:layout_width="match_parent"
@@ -25,20 +25,14 @@
                     app:layout_constraintTop_toTopOf="parent" android:textAlignment="center" android:textSize="30sp"
                     android:layout_gravity="center"/>
         </FrameLayout>
+
         <FrameLayout
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="30">
-            <ImageView
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent" tools:srcCompat="@tools:sample/avatars"
-                    android:id="@+id/card_preview"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintHorizontal_bias="0.0"
-                    app:layout_constraintTop_toBottomOf="@+id/textView" app:layout_constraintVertical_bias="0.0"/>
-        </FrameLayout>
+            android:id="@+id/generated_text_pieces"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_marginLeft="8dp"
+            android:layout_marginRight="8dp"
+            android:layout_weight="30" />
         <FrameLayout
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
@@ -61,6 +55,7 @@
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" android:textAlignment="center" android:textSize="30sp"
                     android:layout_gravity="center|top" android:layout_marginTop="20dp"/>
+
         </FrameLayout>
     </LinearLayout>
 </android.support.constraint.ConstraintLayout>
