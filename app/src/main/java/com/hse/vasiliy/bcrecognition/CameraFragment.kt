@@ -9,11 +9,11 @@ import android.hardware.camera2.*
 import android.os.Bundle
 import android.os.Handler
 import android.os.HandlerThread
-import android.support.v4.content.ContextCompat
+import androidx.core.content.ContextCompat
+import androidx.fragment.app.Fragment
 import android.util.Log
 import java.util.*
 import android.hardware.camera2.CaptureRequest
-import android.support.v4.app.Fragment
 import android.view.*
 import android.view.ViewGroup
 import android.view.LayoutInflater

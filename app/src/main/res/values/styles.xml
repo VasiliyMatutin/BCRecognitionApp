@@ -1,17 +1,16 @@
 <resources>
 
-    <!-- Base application theme. -->
     <style name="AppTheme" parent="android:Theme.Material.Light.DarkActionBar">
-        <!-- Customize your theme here. -->
     </style>
 
-    <style name="NoActionBar" parent="Theme.AppCompat.Light.NoActionBar">
+    <style name="NoActionBar" parent="Theme.MaterialComponents.Light.NoActionBar">
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
     </style>
 
-    <style name="AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
+    <style name="AppBarOverlay" parent="ThemeOverlay.MaterialComponents.Dark.ActionBar">
+    </style>
 
-    <style name="PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
+    <style name="PopupOverlay" parent="ThemeOverlay.MaterialComponents.Light" />
 
 </resources>

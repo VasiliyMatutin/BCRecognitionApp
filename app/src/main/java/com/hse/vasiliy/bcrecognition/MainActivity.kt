@@ -4,12 +4,13 @@ import android.Manifest
 import android.content.pm.PackageManager
 import android.os.Bundle
 import android.os.Environment
-import android.support.design.widget.NavigationView
-import android.support.v4.app.FragmentManager
-import android.support.v4.content.ContextCompat
-import android.support.v4.view.GravityCompat
-import android.support.v7.app.ActionBarDrawerToggle
-import android.support.v7.app.AppCompatActivity
+import android.util.Log
+import androidx.appcompat.app.AppCompatActivity
+import androidx.fragment.app.FragmentManager
+import com.google.android.material.navigation.NavigationView
+import androidx.core.content.ContextCompat
+import androidx.core.view.GravityCompat
+import androidx.appcompat.app.ActionBarDrawerToggle
 import android.view.MenuItem
 import android.widget.FrameLayout
 import kotlinx.android.synthetic.main.activity_main.*
@@ -129,29 +130,24 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     }
 
     private fun openCamera(){
-        val fragment : CameraFragment? = fragmentManager.findFragmentByTag(CAMERA_FRAGMENT_TAG) as CameraFragment?
-        if (fragment == null) {
-            val fragmentTransaction = fragmentManager.beginTransaction()
-            fragmentTransaction.replace(
-                R.id.fragment_container,
-                cameraFragment,
-                CAMERA_FRAGMENT_TAG
-            )
-            fragmentTransaction.commit()
-        }
+        val fragmentTransaction = fragmentManager.beginTransaction()
+        fragmentTransaction.replace(
+            R.id.fragment_container,
+            cameraFragment,
+            CAMERA_FRAGMENT_TAG
+        )
+        fragmentTransaction.commit()
+
     }
 
     fun openRecognition(){
-        val fragment : RecognitionFragment? = fragmentManager.findFragmentByTag(RECOGNITION_FRAGMENT_TAG) as RecognitionFragment?
-        if (fragment == null) {
-            val fragmentTransaction = fragmentManager.beginTransaction()
-            fragmentTransaction.replace(
-                R.id.fragment_container,
-                recognitionFragment,
-                RECOGNITION_FRAGMENT_TAG
-            )
-            fragmentTransaction.commit()
-        }
+        val fragmentTransaction = fragmentManager.beginTransaction()
+        fragmentTransaction.replace(
+            R.id.fragment_container,
+            recognitionFragment,
+            RECOGNITION_FRAGMENT_TAG
+        )
+        fragmentTransaction.addToBackStack(null).commit()
     }
 
     fun requestStartupPermission() {

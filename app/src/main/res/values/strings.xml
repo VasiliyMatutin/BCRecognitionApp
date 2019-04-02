@@ -24,4 +24,5 @@
     <string name="settings_activity_menu_entry">Settings</string>
     <string name="tesseract_error">Something goes wrong with recognition module</string>
     <string name="image_description">description</string>
+    <string name="contact_name">Name</string>
 </resources>

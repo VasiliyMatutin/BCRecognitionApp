@@ -5,7 +5,8 @@ import android.graphics.BitmapFactory
 import android.os.Bundle
 import android.widget.TextView
 import android.content.Context
-import android.support.v4.app.Fragment
+import android.widget.ImageView
+import androidx.fragment.app.Fragment
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -21,6 +22,7 @@ class RecognitionFragment : Fragment() {
     private var applicationTag = "RecognitionFragment"
 
     private lateinit var tmpText: TextView
+    private lateinit var cardPreview: ImageView
     private lateinit var previewBitmap: Bitmap
     private lateinit var tessBaseApi: TessBaseAPI
 
@@ -39,12 +41,14 @@ class RecognitionFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         val view = inflater.inflate(R.layout.recognition_fragment, container, false)
-        tmpText = view.findViewById(R.id.tmp_text_window)
+        //tmpText = view.findViewById(R.id.tmp_text_window)
+        cardPreview = view.findViewById(R.id.card_preview)
 
         val bitmapFile = activity.openFileInput(BITMAP_TMP)
         previewBitmap = BitmapFactory.decodeStream(bitmapFile)
 
-        tmpText.text = extractText(previewBitmap)
+        cardPreview.setImageBitmap(previewBitmap)
+        //tmpText.text = extractText(previewBitmap)
         return view
     }
 
