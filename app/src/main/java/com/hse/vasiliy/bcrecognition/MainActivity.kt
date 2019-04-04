@@ -1,6 +1,7 @@
 package com.hse.vasiliy.bcrecognition
 
 import android.Manifest
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
 import android.os.Environment
@@ -148,6 +149,10 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             RECOGNITION_FRAGMENT_TAG
         )
         fragmentTransaction.addToBackStack(null).commit()
+    }
+
+    fun addContact(intent: Intent){
+        startActivity(intent)
     }
 
     fun requestStartupPermission() {

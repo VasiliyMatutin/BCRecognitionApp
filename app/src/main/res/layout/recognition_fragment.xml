@@ -8,35 +8,19 @@
         tools:context=".RecognitionFragment">
 
     <LinearLayout
+        android:id="@+id/linearLayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
+        android:weightSum="100"
         tools:layout_editor_absoluteX="59dp"
         tools:layout_editor_absoluteY="76dp">
 
         <FrameLayout
-            android:layout_width="match_parent"
-            android:layout_height="79dp">
-
-            <TextView
-                android:id="@+id/textView"
-                android:layout_width="323dp"
-                android:layout_height="45dp"
-                android:layout_gravity="center"
-                android:text="@string/card_preview_header"
-                android:textAlignment="center"
-                android:textSize="30sp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
-        </FrameLayout>
-
-        <FrameLayout
             android:id="@+id/card_preview_layout"
             android:layout_width="match_parent"
-            android:layout_height="214dp"
-            android:layout_marginLeft="8dp"
-            android:layout_marginRight="8dp">
+            android:layout_height="0dp"
+            android:layout_weight="30">
 
             <ImageView
                 android:id="@+id/card_preview"
@@ -45,53 +29,130 @@
                 android:src="@color/colorPrimary" />
         </FrameLayout>
 
-        <LinearLayout
+        <ScrollView
+            android:id="@+id/scrollView2"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical">
+            android:layout_height="0dp"
+            android:layout_weight="70">
 
-            <TextView
-                android:id="@+id/textView4"
-                android:layout_width="323dp"
-                android:layout_height="45dp"
-                android:layout_gravity="center"
-                android:layout_marginTop="20dp"
-                android:text="@string/recognized_text_header"
-                android:textAlignment="center"
-                android:textSize="30sp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
-
-            <ScrollView
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_marginLeft="8dp"
-                android:layout_marginTop="20dp"
-                android:layout_marginRight="8dp"
-                android:layout_marginBottom="80dp">
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
 
-                <LinearLayout
+                <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical">
+                    android:layout_height="match_parent">
 
-                    <com.google.android.material.textfield.TextInputLayout
-                        android:id="@+id/name_text_input"
-                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                    <TextView
+                        android:id="@+id/contact_info_header"
+                        android:layout_width="323dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="15dp"
+                        android:text="@string/recognized_text_header"
+                        android:textAlignment="center"
+                        android:textSize="20sp"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <LinearLayout
+                        android:id="@+id/linearLayout2"
                         android:layout_width="match_parent"
-                        android:layout_height="60dp">
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="15dp"
+                        android:layout_marginBottom="15dp"
+                        android:orientation="vertical"
+                        app:layout_constraintBottom_toTopOf="@+id/create_contact_button"
+                        app:layout_constraintTop_toBottomOf="@+id/contact_info_header">
 
-                        <com.google.android.material.textfield.TextInputEditText
-                            android:id="@+id/name_edit_text"
+                        <com.google.android.material.textfield.TextInputLayout
+                            android:id="@+id/name_text_input"
+                            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                             android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:hint="@string/contact_name" />
-                    </com.google.android.material.textfield.TextInputLayout>
+                            android:layout_height="60dp">
 
-                </LinearLayout>
-            </ScrollView>
-        </LinearLayout>
+                            <com.google.android.material.textfield.TextInputEditText
+                                android:id="@+id/name_edit_text"
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:hint="@string/contact_name" />
+                        </com.google.android.material.textfield.TextInputLayout>
+
+                        <com.google.android.material.textfield.TextInputLayout
+                            android:id="@+id/surname_text_input"
+                            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                            android:layout_width="match_parent"
+                            android:layout_height="60dp">
+
+                            <com.google.android.material.textfield.TextInputEditText
+                                android:id="@+id/surname_edit_text"
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:hint="@string/contact_surname"
+                                android:inputType="textPersonName" />
+                        </com.google.android.material.textfield.TextInputLayout>
+
+                        <com.google.android.material.textfield.TextInputLayout
+                            android:id="@+id/phone_text_input"
+                            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                            android:layout_width="match_parent"
+                            android:layout_height="60dp">
+
+                            <com.google.android.material.textfield.TextInputEditText
+                                android:id="@+id/phone_edit_text"
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:hint="@string/contact_phone"
+                                android:inputType="phone" />
+                        </com.google.android.material.textfield.TextInputLayout>
+
+                        <com.google.android.material.textfield.TextInputLayout
+                            android:id="@+id/email_text_input"
+                            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                            android:layout_width="match_parent"
+                            android:layout_height="60dp">
+
+                            <com.google.android.material.textfield.TextInputEditText
+                                android:id="@+id/email_edit_text"
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:hint="@string/contact_email"
+                                android:inputType="textEmailAddress" />
+                        </com.google.android.material.textfield.TextInputLayout>
+
+                        <com.google.android.material.textfield.TextInputLayout
+                            android:id="@+id/address_text_input"
+                            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                            android:layout_width="match_parent"
+                            android:layout_height="60dp">
+
+                            <com.google.android.material.textfield.TextInputEditText
+                                android:id="@+id/address_edit_text"
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:hint="@string/contact_address"
+                                android:inputType="text" />
+                        </com.google.android.material.textfield.TextInputLayout>
+
+                    </LinearLayout>
+
+                    <Button
+                        android:id="@+id/create_contact_button"
+                        android:layout_width="wrap_content"
+                        android:layout_height="39dp"
+                        android:layout_marginStart="8dp"
+                        android:layout_marginEnd="8dp"
+                        android:layout_marginBottom="15dp"
+                        android:gravity="center"
+                        android:text="@string/add_contact_button"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent" />
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+            </LinearLayout>
+        </ScrollView>
 
     </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

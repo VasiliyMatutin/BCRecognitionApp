@@ -4,7 +4,7 @@
     <string name="scanning_header_message">Добавьте визитку</string>
     <string name="scanning_help_message">Полностью поместите визитку в кадр</string>
     <string name="scanning_button">Считать информацию</string>
-    <string name="recognized_text_header">Считанная информация</string>
+    <string name="recognized_text_header">Контактные данные</string>
     <string name="cancel">Отмена</string>
     <string name="camera_access_error">Приложение не смогло получить доступ к камере. Завершение работы</string>
     <string name="camera_access_required_title">Необходим доступ к камере и файловой системе устройства</string>
@@ -20,5 +20,9 @@
     <string name="settings_activity_menu_entry">Настройки</string>
     <string name="tesseract_error">Ошибка в модуле распознавания</string>
     <string name="image_description">description</string>
-    <string name="contact_name">Name</string>
+    <string name="contact_name">Имя</string>
+    <string name="contact_surname">Фамилия</string>
+    <string name="contact_phone">Телефон</string>
+    <string name="contact_email">Электронная почта</string>
+    <string name="contact_address">Адрес</string>
 </resources>

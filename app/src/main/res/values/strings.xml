@@ -2,7 +2,7 @@
     <string name="app_name">BCRecognition</string>
     <string name="scanning_header_message">Add a card</string>
     <string name="card_preview_header">Card preview</string>
-    <string name="recognized_text_header">Recognized information</string>
+    <string name="recognized_text_header">Contact information</string>
     <string name="scanning_help_message">Line it up with the frame</string>
     <string name="scanning_button">Recognize</string>
     <string name="camera_access_required">Application will close if permissions will not be granted. Request
@@ -25,4 +25,9 @@
     <string name="tesseract_error">Something goes wrong with recognition module</string>
     <string name="image_description">description</string>
     <string name="contact_name">Name</string>
+    <string name="contact_surname">Surname</string>
+    <string name="contact_phone">Phone</string>
+    <string name="contact_email">E-mail</string>
+    <string name="contact_address">Address</string>
+    <string name="add_contact_button">Save</string>
 </resources>
