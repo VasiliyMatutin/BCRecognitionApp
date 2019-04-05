@@ -86,7 +86,7 @@
                             android:layout_height="60dp">
 
                             <com.google.android.material.textfield.TextInputEditText
-                                android:id="@+id/surname_edit_text"
+                                android:id="@+id/organizaton_edit_text"
                                 android:layout_width="match_parent"
                                 android:layout_height="match_parent"
                                 android:hint="@string/contact_surname"

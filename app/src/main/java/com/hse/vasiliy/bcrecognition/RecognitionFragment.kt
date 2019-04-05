@@ -14,7 +14,19 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import com.google.android.material.textfield.TextInputEditText
+import com.google.api.client.googleapis.auth.oauth2.GoogleCredential
 import com.googlecode.tesseract.android.TessBaseAPI
+import com.google.firebase.ml.vision.FirebaseVision
+import com.google.firebase.ml.vision.common.FirebaseVisionImage
+import com.google.api.client.http.HttpRequestInitializer
+import com.google.api.client.json.jackson2.JacksonFactory
+import com.google.api.client.http.javanet.NetHttpTransport
+import com.google.api.services.language.v1.CloudNaturalLanguage
+import com.google.api.services.language.v1.CloudNaturalLanguageScopes
+import com.google.api.services.language.v1.model.AnalyzeEntitiesRequest
+import com.google.api.services.language.v1.model.AnalyzeEntitiesResponse
+import com.google.api.services.language.v1.model.Document
+import com.google.api.services.language.v1.model.Entity
 
 
 class RecognitionFragment : Fragment() {
@@ -28,7 +40,7 @@ class RecognitionFragment : Fragment() {
     private lateinit var previewBitmap: Bitmap
     private lateinit var tessBaseApi: TessBaseAPI
     private lateinit var nameText: TextInputEditText
-    private lateinit var surnameText: TextInputEditText
+    private lateinit var organizationText: TextInputEditText
     private lateinit var phoneText: TextInputEditText
     private lateinit var emailText: TextInputEditText
     private lateinit var addressText: TextInputEditText
@@ -49,7 +61,7 @@ class RecognitionFragment : Fragment() {
     ): View? {
         val view = inflater.inflate(R.layout.recognition_fragment, container, false)
         nameText = view.findViewById(R.id.name_edit_text)
-        surnameText = view.findViewById(R.id.surname_edit_text)
+        organizationText = view.findViewById(R.id.organizaton_edit_text)
         phoneText = view.findViewById(R.id.phone_edit_text)
         emailText = view.findViewById(R.id.email_edit_text)
         addressText = view.findViewById(R.id.address_edit_text)
@@ -60,39 +72,17 @@ class RecognitionFragment : Fragment() {
         previewBitmap = BitmapFactory.decodeStream(bitmapFile)
 
         cardPreview.setImageBitmap(previewBitmap)
-        //tmpText.text = extractText(previewBitmap)
         val recognizeBtn = view.findViewById(R.id.create_contact_button) as Button
         recognizeBtn.setOnClickListener{
             createContactButtonClicked()
         }
+        analyzeEntitiesAutomatically("Google, headquartered in Mountain View, unveiled the new Android phone at the Consumer Electronic Show.  Sundar Pichai said in his keynote that users love their new Android phones.")
         return view
-    }
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
-        /*val image = FirebaseVisionImage.fromBitmap(previewBitmap)
-        val detector = FirebaseVision.getInstance().onDeviceTextRecognizer
-        val result = detector.processImage(image)
-            .addOnSuccessListener { firebaseVisionText ->
-                var text = ""
-                for (block in firebaseVisionText.textBlocks) text += block.text + "\n"
-                tmpText.text = text
-            }
-            .addOnFailureListener {
-                val toast = Toast.makeText(
-                    applicationContext,
-                    "This is not ok", //TODO:add error handler
-                    Toast.LENGTH_SHORT
-                )
-                toast.show()
-            }*/
-
     }
 
     private fun extractText(bitmap: Bitmap): String {
 
-        try {
+        /*try {
             tessBaseApi = TessBaseAPI()
         } catch (exc: Exception) {
             Log.e(applicationTag, exc.toString())
@@ -108,15 +98,35 @@ class RecognitionFragment : Fragment() {
             Log.e(applicationTag, exc.toString())
             activity.showErrorByRequest(getString(R.string.camera_access_error))
         }
-        tessBaseApi.end()
+        tessBaseApi.end()*/
+
+        var extractedText = getString(R.string.empty_text)
+        val image = FirebaseVisionImage.fromBitmap(previewBitmap)
+        val detector = FirebaseVision.getInstance().onDeviceTextRecognizer
+        val result = detector.processImage(image)
+            .addOnSuccessListener { firebaseVisionText ->
+                var text = ""
+                for (block in firebaseVisionText.textBlocks) text += block.text + "\n"
+                extractedText = text
+            }
+            .addOnFailureListener {
+                activity.showErrorByRequest(getString(R.string.camera_access_error))
+            }
         return extractedText
     }
+
+    private fun analyzeEntitiesAutomatically(text: String){
+        val task = AutomaticOnlineEntityAnalyzer(attachedActivityContext, text)
+        task.execute()
+    }
+
+
 
     private fun createContactButtonClicked() {
         val intent = Intent(ContactsContract.Intents.Insert.ACTION).apply {
             type = ContactsContract.RawContacts.CONTENT_TYPE
-            val fullName = nameText.text.toString() + " " + surnameText.text.toString()
-            putExtra(ContactsContract.Intents.Insert.NAME, fullName)
+            putExtra(ContactsContract.Intents.Insert.NAME, nameText.text)
+            putExtra(ContactsContract.Intents.Insert.COMPANY, organizationText.text)
             putExtra(ContactsContract.Intents.Insert.PHONE, phoneText.text)
             putExtra(ContactsContract.Intents.Insert.EMAIL, emailText.text)
             putExtra(ContactsContract.Intents.Insert.POSTAL, addressText.text)

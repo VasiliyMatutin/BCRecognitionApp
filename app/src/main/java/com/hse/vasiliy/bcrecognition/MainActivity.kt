@@ -57,6 +57,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         //Check that storage is available
         checkExternalStorageWritable()
         copyTesseractFilesOnStorage()
+        initAuthToken()
     }
 
     override fun onBackPressed() {
@@ -130,6 +131,11 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         }
     }
 
+    private fun initAuthToken() {
+        val task = GoogleAccessTokenLoader(applicationContext)
+        task.execute()
+    }
+
     private fun openCamera(){
         val fragmentTransaction = fragmentManager.beginTransaction()
         fragmentTransaction.replace(
@@ -138,7 +144,6 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             CAMERA_FRAGMENT_TAG
         )
         fragmentTransaction.commit()
-
     }
 
     fun openRecognition(){

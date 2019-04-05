@@ -10,4 +10,7 @@ const val TESSERACT_ASSETS = "traindata"
 const val CAMERA_FRAGMENT_TAG = "CAMERA_FRAGMENT"
 const val RECOGNITION_FRAGMENT_TAG = "RECOGNITION_FRAGMENT"
 
+const val PREFS = "AccessTokenLoader"
+const val PREF_ACCESS_TOKEN = "access_token"
+
 const val TAG = "logger"
