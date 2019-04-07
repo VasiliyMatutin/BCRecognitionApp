@@ -76,21 +76,22 @@
                                 android:id="@+id/name_edit_text"
                                 android:layout_width="match_parent"
                                 android:layout_height="match_parent"
-                                android:hint="@string/contact_name" />
+                                android:hint="@string/contact_name"
+                                android:inputType="textPersonName" />
                         </com.google.android.material.textfield.TextInputLayout>
 
                         <com.google.android.material.textfield.TextInputLayout
-                            android:id="@+id/surname_text_input"
+                            android:id="@+id/organization_text_input"
                             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                             android:layout_width="match_parent"
                             android:layout_height="60dp">
 
                             <com.google.android.material.textfield.TextInputEditText
-                                android:id="@+id/organizaton_edit_text"
+                                android:id="@+id/organization_edit_text"
                                 android:layout_width="match_parent"
                                 android:layout_height="match_parent"
-                                android:hint="@string/contact_surname"
-                                android:inputType="textPersonName" />
+                                android:hint="@string/contact_organization"
+                                android:inputType="text" />
                         </com.google.android.material.textfield.TextInputLayout>
 
                         <com.google.android.material.textfield.TextInputLayout

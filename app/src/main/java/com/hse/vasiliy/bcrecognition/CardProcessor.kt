@@ -7,6 +7,7 @@ import android.util.Log
 import android.view.View
 import android.widget.LinearLayout
 import androidx.constraintlayout.widget.ConstraintLayout
+import com.google.android.material.textfield.TextInputEditText
 import com.google.api.client.googleapis.auth.oauth2.GoogleCredential
 import com.google.api.client.http.HttpRequestInitializer
 import com.google.api.client.http.javanet.NetHttpTransport
@@ -27,6 +28,12 @@ class CardProcessor(context: Context, view: View, private val previewBitmap: Bit
     private val contextRef = WeakReference(context)
     private val view = WeakReference(view)
 
+    private var nameText = ""
+    private var organizationText = ""
+    private var phoneText = ""
+    private var emailText = ""
+    private var addressText = ""
+
     private val appTag = "RECOGNITION_ASYNC"
 
     override fun onPreExecute() {
@@ -36,6 +43,9 @@ class CardProcessor(context: Context, view: View, private val previewBitmap: Bit
             if (mView != null) {
                 mView.findViewById<ConstraintLayout>(R.id.loading_recognition_view).visibility = View.VISIBLE
                 mView.findViewById<LinearLayout>(R.id.main_recognition_view).visibility = View.INVISIBLE
+
+                cleanupTexts()
+                fillContactVisibleFields()
             } else {
                 throw Exception("Activity doesn't exists anymore")
             }
@@ -57,6 +67,8 @@ class CardProcessor(context: Context, view: View, private val previewBitmap: Bit
             if (mView != null) {
                 mView.findViewById<ConstraintLayout>(R.id.loading_recognition_view).visibility = View.INVISIBLE
                 mView.findViewById<LinearLayout>(R.id.main_recognition_view).visibility = View.VISIBLE
+
+                fillContactVisibleFields()
             } else {
                 throw Exception("Activity doesn't exists anymore")
             }
@@ -142,8 +154,38 @@ class CardProcessor(context: Context, view: View, private val previewBitmap: Bit
             val requestResult = request.execute()
             if (requestResult is AnalyzeEntitiesResponse) {
                 requestResult.entities.forEach {
-                    Log.v("ENTITY_TYPE", it.type + " " + it.name)
+                    when(it.type) {
+                        "PERSON" -> nameText += it.name
+                        "ORGANIZATION" -> organizationText += it.name
+                        "PHONE_NUMBER" -> phoneText += it.name
+                        "ADDRESS", "LOCATION" -> addressText += it.name
+                    }
                 }
+            }
+        } catch (exc: Exception) {
+            Log.e(appTag, exc.toString())
+        }
+    }
+
+    private fun cleanupTexts() {
+        nameText = ""
+        organizationText = ""
+        phoneText = ""
+        emailText = ""
+        addressText = ""
+    }
+
+    private fun fillContactVisibleFields() {
+        val mView = view.get()
+        try {
+            if (mView != null) {
+                mView.findViewById<TextInputEditText>(R.id.name_edit_text).setText(nameText)
+                mView.findViewById<TextInputEditText>(R.id.organization_edit_text).setText(organizationText)
+                mView.findViewById<TextInputEditText>(R.id.phone_edit_text).setText(phoneText)
+                mView.findViewById<TextInputEditText>(R.id.email_edit_text).setText(emailText)
+                mView.findViewById<TextInputEditText>(R.id.address_edit_text).setText(addressText)
+            } else {
+                throw Exception("Activity doesn't exists anymore")
             }
         } catch (exc: Exception) {
             Log.e(appTag, exc.toString())

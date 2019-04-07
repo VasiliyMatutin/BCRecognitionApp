@@ -14,7 +14,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import com.google.android.material.textfield.TextInputEditText
-import com.googlecode.tesseract.android.TessBaseAPI
 
 
 class RecognitionFragment : Fragment() {
@@ -26,7 +25,6 @@ class RecognitionFragment : Fragment() {
 
     private lateinit var cardPreview: ImageView
     private lateinit var previewBitmap: Bitmap
-    private lateinit var tessBaseApi: TessBaseAPI
     private lateinit var nameText: TextInputEditText
     private lateinit var organizationText: TextInputEditText
     private lateinit var phoneText: TextInputEditText
@@ -49,7 +47,7 @@ class RecognitionFragment : Fragment() {
     ): View? {
         val view = inflater.inflate(R.layout.recognition_fragment, container, false)
         nameText = view.findViewById(R.id.name_edit_text)
-        organizationText = view.findViewById(R.id.organizaton_edit_text)
+        organizationText = view.findViewById(R.id.organization_edit_text)
         phoneText = view.findViewById(R.id.phone_edit_text)
         emailText = view.findViewById(R.id.email_edit_text)
         addressText = view.findViewById(R.id.address_edit_text)
@@ -73,11 +71,11 @@ class RecognitionFragment : Fragment() {
     private fun createContactButtonClicked() {
         val intent = Intent(ContactsContract.Intents.Insert.ACTION).apply {
             type = ContactsContract.RawContacts.CONTENT_TYPE
-            putExtra(ContactsContract.Intents.Insert.NAME, nameText.text)
-            putExtra(ContactsContract.Intents.Insert.COMPANY, organizationText.text)
-            putExtra(ContactsContract.Intents.Insert.PHONE, phoneText.text)
-            putExtra(ContactsContract.Intents.Insert.EMAIL, emailText.text)
-            putExtra(ContactsContract.Intents.Insert.POSTAL, addressText.text)
+            putExtra(ContactsContract.Intents.Insert.NAME, nameText.text.toString())
+            putExtra(ContactsContract.Intents.Insert.COMPANY, organizationText.text.toString())
+            putExtra(ContactsContract.Intents.Insert.PHONE, phoneText.text.toString())
+            putExtra(ContactsContract.Intents.Insert.EMAIL, emailText.text.toString())
+            putExtra(ContactsContract.Intents.Insert.POSTAL, addressText.text.toString())
         }
         activity.addContact(intent)
     }
