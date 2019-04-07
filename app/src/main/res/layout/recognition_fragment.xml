@@ -98,14 +98,14 @@
                             android:id="@+id/phone_text_input"
                             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                             android:layout_width="match_parent"
+                            android:hint="@string/contact_phone"
                             android:layout_height="60dp">
 
                             <com.google.android.material.textfield.TextInputEditText
                                 android:id="@+id/phone_edit_text"
                                 android:layout_width="match_parent"
                                 android:layout_height="match_parent"
-                                android:hint="@string/contact_phone"
-                                android:inputType="phone" />
+                                android:inputType="number|text" />
                         </com.google.android.material.textfield.TextInputLayout>
 
                         <com.google.android.material.textfield.TextInputLayout

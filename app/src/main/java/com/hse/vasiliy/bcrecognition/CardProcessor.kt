@@ -57,6 +57,7 @@ class CardProcessor(context: Context, view: View, private val previewBitmap: Bit
     override fun doInBackground(vararg params: Void?): Void? {
         val extractedText = extractText(previewBitmap)
         analyzeEntities(extractedText)
+        analyzeTextByRegex(extractedText)
         return null
     }
 
@@ -105,7 +106,7 @@ class CardProcessor(context: Context, view: View, private val previewBitmap: Bit
                 var text = ""
                 for (block in firebaseVisionText.textBlocks) text += block.text + "\n"
                 extractedText = text
-                Log.v("EXTRACTED_TEXT", extractedText)
+                Log.d("EXTRACTED_TEXT", extractedText)
                 textProcessedLatch.countDown()
             }
             .addOnFailureListener {
@@ -164,6 +165,30 @@ class CardProcessor(context: Context, view: View, private val previewBitmap: Bit
             }
         } catch (exc: Exception) {
             Log.e(appTag, exc.toString())
+        }
+    }
+
+    private fun analyzeTextByRegex(text : String){
+        if (phoneText.isEmpty() || emailText.isEmpty()) {
+            val words = text.lines().joinToString(" ").split(" ")
+            if (emailText.isEmpty()) {
+                val regex = EMAIL_REGEX.toRegex()
+                for (word in words) {
+                    if (regex.matches(word)) {
+                        emailText = word
+                        break
+                    }
+                }
+            }
+            if (phoneText.isEmpty()) {
+                val regex = PHONE_REGEX.toRegex()
+                for (word in words) {
+                    if (regex.matches(word)) {
+                        phoneText = word
+                        break
+                    }
+                }
+            }
         }
     }
 
