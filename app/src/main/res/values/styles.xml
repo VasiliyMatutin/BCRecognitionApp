@@ -13,4 +13,8 @@
 
     <style name="PopupOverlay" parent="ThemeOverlay.MaterialComponents.Light" />
 
+    <style name="Launcher" parent="android:Theme.Material.Light.NoActionBar">
+        <item name="android:windowBackground">@drawable/launch_screen</item>
+    </style>
+
 </resources>

@@ -18,11 +18,13 @@
     <string name="communicate">Рассказать о нас</string>
     <string name="share">Поделиться</string>
     <string name="settings_activity_menu_entry">Настройки</string>
-    <string name="tesseract_error">Ошибка в модуле распознавания</string>
+    <string name="recognition_error">Ошибка в модуле распознавания</string>
     <string name="image_description">description</string>
     <string name="contact_name">Имя</string>
     <string name="contact_surname">Фамилия</string>
     <string name="contact_phone">Телефон</string>
     <string name="contact_email">Электронная почта</string>
     <string name="contact_address">Адрес</string>
+    <string name="recognition_progress_text">Распознавание текста...</string>
+    <string name="add_contact_button">Сохранить</string>
 </resources>

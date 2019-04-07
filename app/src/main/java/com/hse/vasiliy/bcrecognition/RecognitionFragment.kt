@@ -14,19 +14,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import com.google.android.material.textfield.TextInputEditText
-import com.google.api.client.googleapis.auth.oauth2.GoogleCredential
 import com.googlecode.tesseract.android.TessBaseAPI
-import com.google.firebase.ml.vision.FirebaseVision
-import com.google.firebase.ml.vision.common.FirebaseVisionImage
-import com.google.api.client.http.HttpRequestInitializer
-import com.google.api.client.json.jackson2.JacksonFactory
-import com.google.api.client.http.javanet.NetHttpTransport
-import com.google.api.services.language.v1.CloudNaturalLanguage
-import com.google.api.services.language.v1.CloudNaturalLanguageScopes
-import com.google.api.services.language.v1.model.AnalyzeEntitiesRequest
-import com.google.api.services.language.v1.model.AnalyzeEntitiesResponse
-import com.google.api.services.language.v1.model.Document
-import com.google.api.services.language.v1.model.Entity
 
 
 class RecognitionFragment : Fragment() {
@@ -76,51 +64,11 @@ class RecognitionFragment : Fragment() {
         recognizeBtn.setOnClickListener{
             createContactButtonClicked()
         }
-        analyzeEntitiesAutomatically("Google, headquartered in Mountain View, unveiled the new Android phone at the Consumer Electronic Show.  Sundar Pichai said in his keynote that users love their new Android phones.")
+
+        val task = CardProcessor(attachedActivityContext, view, previewBitmap)
+        task.execute()
         return view
     }
-
-    private fun extractText(bitmap: Bitmap): String {
-
-        /*try {
-            tessBaseApi = TessBaseAPI()
-        } catch (exc: Exception) {
-            Log.e(applicationTag, exc.toString())
-            activity.showErrorByRequest(getString(R.string.camera_access_error))
-        }
-
-        tessBaseApi.init("${attachedActivityContext.getExternalFilesDir(null)}", "eng")
-        tessBaseApi.setImage(bitmap)
-        var extractedText = getString(R.string.empty_text)
-        try {
-            extractedText = tessBaseApi.utF8Text
-        } catch (exc: Exception) {
-            Log.e(applicationTag, exc.toString())
-            activity.showErrorByRequest(getString(R.string.camera_access_error))
-        }
-        tessBaseApi.end()*/
-
-        var extractedText = getString(R.string.empty_text)
-        val image = FirebaseVisionImage.fromBitmap(previewBitmap)
-        val detector = FirebaseVision.getInstance().onDeviceTextRecognizer
-        val result = detector.processImage(image)
-            .addOnSuccessListener { firebaseVisionText ->
-                var text = ""
-                for (block in firebaseVisionText.textBlocks) text += block.text + "\n"
-                extractedText = text
-            }
-            .addOnFailureListener {
-                activity.showErrorByRequest(getString(R.string.camera_access_error))
-            }
-        return extractedText
-    }
-
-    private fun analyzeEntitiesAutomatically(text: String){
-        val task = AutomaticOnlineEntityAnalyzer(attachedActivityContext, text)
-        task.execute()
-    }
-
-
 
     private fun createContactButtonClicked() {
         val intent = Intent(ContactsContract.Intents.Insert.ACTION).apply {

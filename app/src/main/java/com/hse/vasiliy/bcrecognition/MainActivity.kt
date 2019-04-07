@@ -29,6 +29,8 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     private lateinit var recognitionFragment: RecognitionFragment
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        initAuthToken()
+        setTheme(R.style.NoActionBar)
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
@@ -57,7 +59,6 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         //Check that storage is available
         checkExternalStorageWritable()
         copyTesseractFilesOnStorage()
-        initAuthToken()
     }
 
     override fun onBackPressed() {
