@@ -19,6 +19,7 @@ import com.google.api.services.language.v1.model.AnalyzeEntitiesResponse
 import com.google.api.services.language.v1.model.Document
 import com.google.firebase.ml.vision.FirebaseVision
 import com.google.firebase.ml.vision.common.FirebaseVisionImage
+import com.googlecode.tesseract.android.TessBaseAPI
 import java.lang.ref.WeakReference
 import java.util.concurrent.CountDownLatch
 
@@ -27,6 +28,8 @@ class CardProcessor(context: Context, view: View, private val previewBitmap: Bit
 
     private val contextRef = WeakReference(context)
     private val view = WeakReference(view)
+
+    private var isOffline = true
 
     private var nameText = ""
     private var organizationText = ""
@@ -81,48 +84,65 @@ class CardProcessor(context: Context, view: View, private val previewBitmap: Bit
     private fun extractText(previewBitmap: Bitmap): String {
         var extractedText = ""
 
-        /*try {
-            tessBaseApi = TessBaseAPI()
-        } catch (exc: Exception) {
-            Log.e(applicationTag, exc.toString())
-            activity.showErrorByRequest(getString(R.string.camera_access_error))
+        val mContext = contextRef.get()
+        if (mContext != null) {
+            val prefs = mContext.getSharedPreferences(PREFS, Context.MODE_PRIVATE)
+            if (!prefs.getBoolean(OFFLINE_MODE, false)) {
+                isOffline = false
+            }
         }
 
-        tessBaseApi.init("${attachedActivityContext.getExternalFilesDir(null)}", "eng")
-        tessBaseApi.setImage(bitmap)
-        var extractedText = getString(R.string.empty_text)
-        try {
-            extractedText = tessBaseApi.utF8Text
-        } catch (exc: Exception) {
-            Log.e(applicationTag, exc.toString())
-            activity.showErrorByRequest(getString(R.string.camera_access_error))
-        }
-        tessBaseApi.end()*/
-        val textProcessedLatch = CountDownLatch(1)
-        val image = FirebaseVisionImage.fromBitmap(previewBitmap)
-        val detector = FirebaseVision.getInstance().cloudTextRecognizer
-        detector.processImage(image)
-            .addOnSuccessListener { firebaseVisionText ->
-                var text = ""
-                for (block in firebaseVisionText.textBlocks) text += block.text + "\n"
-                extractedText = text
-                Log.d("EXTRACTED_TEXT", extractedText)
-                textProcessedLatch.countDown()
+        if (isOffline) {
+            val tessBaseApi: TessBaseAPI?
+            try {
+                tessBaseApi = TessBaseAPI()
+            } catch (exc: Exception) {
+                Log.e(appTag, exc.toString())
+                return ""
             }
-            .addOnFailureListener {
-                val mContext = contextRef.get()
-                if (mContext != null) {
-                    (mContext as MainActivity).showErrorByRequest(mContext.getString(R.string.recognition_error))
-                } else {
-                    Log.e(appTag, it.toString())
+            if (mContext != null) {
+                tessBaseApi.init("${mContext.getExternalFilesDir(null)}", "eng")
+            } else {
+                throw Exception("Cannot get access to application dir")
+            }
+            tessBaseApi.setImage(previewBitmap)
+            try {
+                extractedText = tessBaseApi.utF8Text
+            } catch (exc: Exception) {
+                Log.e(appTag, exc.toString())
+                return ""
+            }
+            tessBaseApi.end()
+        } else {
+            val textProcessedLatch = CountDownLatch(1)
+            val image = FirebaseVisionImage.fromBitmap(previewBitmap)
+            val detector = FirebaseVision.getInstance().cloudTextRecognizer
+            detector.processImage(image)
+                .addOnSuccessListener { firebaseVisionText ->
+                    var text = ""
+                    for (block in firebaseVisionText.textBlocks) text += block.text + "\n"
+                    extractedText = text
+                    Log.d("EXTRACTED_TEXT", extractedText)
+                    textProcessedLatch.countDown()
                 }
-                textProcessedLatch.countDown()
-            }
-        textProcessedLatch.await()
+                .addOnFailureListener {
+                    val mContext = contextRef.get()
+                    if (mContext != null) {
+                        (mContext as MainActivity).showErrorByRequest(mContext.getString(R.string.recognition_error))
+                    } else {
+                        Log.e(appTag, it.toString())
+                    }
+                    textProcessedLatch.countDown()
+                }
+            textProcessedLatch.await()
+        }
         return extractedText
     }
 
     private fun analyzeEntities(text: String) {
+        if (isOffline){
+            return
+        }
         try {
             val mContext = contextRef.get()
             val currentToken: String?
@@ -156,10 +176,10 @@ class CardProcessor(context: Context, view: View, private val previewBitmap: Bit
             if (requestResult is AnalyzeEntitiesResponse) {
                 requestResult.entities.forEach {
                     when(it.type) {
-                        "PERSON" -> nameText += it.name
-                        "ORGANIZATION" -> organizationText += it.name
-                        "PHONE_NUMBER" -> phoneText += it.name
-                        "ADDRESS", "LOCATION" -> addressText += it.name
+                        "PERSON" -> nameText += it.name + " "
+                        "ORGANIZATION" -> organizationText += it.name + " "
+                        "PHONE_NUMBER" -> phoneText += it.name + " "
+                        "ADDRESS", "LOCATION" -> addressText += it.name + " "
                     }
                 }
             }

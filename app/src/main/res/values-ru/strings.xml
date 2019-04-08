@@ -27,4 +27,5 @@
     <string name="contact_address">Адрес</string>
     <string name="recognition_progress_text">Распознавание текста...</string>
     <string name="add_contact_button">Сохранить</string>
+    <string name="offline_switch_name">Оффлайн режим</string>
 </resources>

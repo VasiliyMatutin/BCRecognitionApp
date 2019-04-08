@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     tools:showIn="navigation_view">
 
@@ -13,12 +14,16 @@
             android:icon="@drawable/ic_menu_gallery"
             android:enabled="false"
             android:title="@string/saved_unrecognized_cards" />
-        <item
-            android:id="@+id/nav_settings"
-            android:icon="@drawable/ic_menu_manage"
-            android:enabled="false"
-            android:title="@string/settings_activity_menu_entry" />
     </group>
+
+    <item android:title="@string/settings_activity_menu_entry">
+        <menu>
+            <item
+                android:id="@+id/offline_switch_item"
+                android:title="@string/offline_switch_name"
+                app:actionLayout="@layout/switch_item" />
+        </menu>
+    </item>
 
     <item android:title="@string/communicate">
         <menu>

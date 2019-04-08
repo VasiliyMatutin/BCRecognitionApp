@@ -1,6 +1,7 @@
 package com.hse.vasiliy.bcrecognition
 
 import android.Manifest
+import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
@@ -14,6 +15,7 @@ import androidx.core.view.GravityCompat
 import androidx.appcompat.app.ActionBarDrawerToggle
 import android.view.MenuItem
 import android.widget.FrameLayout
+import android.widget.Switch
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.app_bar_main.*
 import java.io.File
@@ -51,6 +53,8 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
         nav_view.setNavigationItemSelectedListener(this)
 
+        moduleModePreparation()
+
         //Need to request permission on first launch
         if (ContextCompat.checkSelfPermission(applicationContext, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
             requestStartupPermission()
@@ -74,18 +78,16 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             R.id.nav_camera -> {
                 openCamera()
             }
-            R.id.nav_gallery -> {
-
+            R.id.offline_switch -> {
+                return true
             }
-            R.id.nav_settings -> {
+            R.id.nav_gallery -> {
 
             }
             R.id.nav_share -> {
 
             }
         }
-
-        drawer_layout.closeDrawer(GravityCompat.START)
         return true
     }
 
@@ -145,6 +147,23 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             CAMERA_FRAGMENT_TAG
         )
         fragmentTransaction.commit()
+    }
+
+    private fun moduleModePreparation(){
+        val prefs = getSharedPreferences(PREFS, Context.MODE_PRIVATE)
+        val offlineSwitch = findViewById<NavigationView>(R.id.nav_view).menu.findItem(R.id.offline_switch_item).
+            actionView.findViewById<Switch>(R.id.offline_switch)
+        if (prefs.getBoolean(OFFLINE_MODE, false)){
+            offlineSwitch.isChecked = true
+        }
+        offlineSwitch.setOnCheckedChangeListener { _, isChecked ->
+            if (isChecked){
+                prefs.edit().putBoolean(OFFLINE_MODE, true).apply()
+            }
+            else{
+                prefs.edit().putBoolean(OFFLINE_MODE, false).apply()
+            }
+        }
     }
 
     fun openRecognition(){
