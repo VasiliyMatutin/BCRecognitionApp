@@ -32,4 +32,18 @@
     <string name="add_contact_button">Save</string>
     <string name="recognition_progress_text">Card processing...</string>
     <string name="offline_switch_name">Offline mode</string>
+    <string name="network_connection_setting">Network connection</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="online_notification_title">Automatically switch to online</string>
+    <string name="offline_notification_title">Warn about offline mode</string>
+    <string name="online_notification_description_on">Recieve notification each time network connection detected</string>
+    <string name="offline_notification_description_on">Recieve notification when network connection is unavailable</string>
+    <string name="wifi_only_title">Wi-Fi only</string>
+    <string name="wifi_only_description_on">Use cloud recognition only over Wi-Fi</string>
+    <string name="notification_category">Notification</string>
+    <string name="network_category">Network</string>
+    <string name="online_notification_description_off">Do not recieve notification each time network connection detected</string>
+    <string name="offline_notification_description_off">Do not recieve notification when network connection is unavailable</string>
+    <string name="wifi_only_description_off">Use cloud recognition over any network</string>
 </resources>

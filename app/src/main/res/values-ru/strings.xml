@@ -28,4 +28,16 @@
     <string name="recognition_progress_text">Распознавание текста...</string>
     <string name="add_contact_button">Сохранить</string>
     <string name="offline_switch_name">Оффлайн режим</string>
+    <string name="network_connection_setting">Соединение с сетью</string>
+    <string name="online_notification_title">Автоматическое переключение в онлайн</string>
+    <string name="offline_notification_title">Предупреждение об отсутсвии сети</string>
+    <string name="online_notification_description_on">Получать уведомления когда доступно мобильное соединение</string>
+    <string name="offline_notification_description_on">Получать уведомления в случае отсутствия интернет соединения</string>
+    <string name="wifi_only_title">Только Wi-Fi соединение</string>
+    <string name="wifi_only_description_on">Использовать распознавание через облако только в Wi-Fi режиме</string>
+    <string name="notification_category">Уведомления</string>
+    <string name="network_category">Соединение с сетью</string>
+    <string name="online_notification_description_off">Не получать уведомления когда доступно мобильное соединение</string>
+    <string name="offline_notification_description_off">Не получать уведомления в случае отсутствия интернет соединения</string>
+    <string name="wifi_only_description_off">Использовать распознавание через облако в любом режиме</string>
 </resources>

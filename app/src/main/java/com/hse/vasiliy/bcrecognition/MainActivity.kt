@@ -29,6 +29,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     private lateinit var fragmentManager: FragmentManager
     private lateinit var cameraFragment: CameraFragment
     private lateinit var recognitionFragment: RecognitionFragment
+    private lateinit var settingsFragment: SettingsFragment
 
     override fun onCreate(savedInstanceState: Bundle?) {
         initAuthToken()
@@ -41,6 +42,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         val fragmentTransaction = fragmentManager.beginTransaction()
         cameraFragment = CameraFragment()
         recognitionFragment = RecognitionFragment()
+        settingsFragment = SettingsFragment()
         fragmentTransaction.add(R.id.fragment_container, cameraFragment, CAMERA_FRAGMENT_TAG)
         fragmentTransaction.commit()
 
@@ -78,16 +80,20 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             R.id.nav_camera -> {
                 openCamera()
             }
-            R.id.offline_switch -> {
-                return true
+            R.id.nav_settings -> {
+                openSettings()
             }
             R.id.nav_gallery -> {
 
+            }
+            R.id.nav_offline_switch -> {
+                return true
             }
             R.id.nav_share -> {
 
             }
         }
+        drawer_layout.closeDrawer(GravityCompat.START)
         return true
     }
 
@@ -149,9 +155,19 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         fragmentTransaction.commit()
     }
 
+    private fun openSettings(){
+        val fragmentTransaction = fragmentManager.beginTransaction()
+        fragmentTransaction.replace(
+            R.id.fragment_container,
+            settingsFragment,
+            SETTINGS_FRAGMENT_TAG
+        )
+        fragmentTransaction.addToBackStack(null).commit()
+    }
+
     private fun moduleModePreparation(){
         val prefs = getSharedPreferences(PREFS, Context.MODE_PRIVATE)
-        val offlineSwitch = findViewById<NavigationView>(R.id.nav_view).menu.findItem(R.id.offline_switch_item).
+        val offlineSwitch = findViewById<NavigationView>(R.id.nav_view).menu.findItem(R.id.nav_offline_switch).
             actionView.findViewById<Switch>(R.id.offline_switch)
         if (prefs.getBoolean(OFFLINE_MODE, false)){
             offlineSwitch.isChecked = true
