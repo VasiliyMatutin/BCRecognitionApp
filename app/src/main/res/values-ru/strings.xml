@@ -3,7 +3,7 @@
     <string name="app_name">РаспознавательВизиток</string>
     <string name="scanning_header_message">Добавьте визитку</string>
     <string name="scanning_help_message">Полностью поместите визитку в кадр</string>
-    <string name="scanning_button">Считать информацию</string>
+    <string name="scanning_button">Сканировать</string>
     <string name="recognized_text_header">Контактные данные</string>
     <string name="cancel">Отмена</string>
     <string name="camera_access_error">Приложение не смогло получить доступ к камере. Завершение работы</string>
@@ -25,19 +25,24 @@
     <string name="contact_phone">Телефон</string>
     <string name="contact_email">Электронная почта</string>
     <string name="contact_address">Адрес</string>
-    <string name="recognition_progress_text">Распознавание текста...</string>
+    <string name="recognition_progress_text">Распознавание текста…</string>
     <string name="add_contact_button">Сохранить</string>
     <string name="offline_switch_name">Оффлайн режим</string>
     <string name="network_connection_setting">Соединение с сетью</string>
-    <string name="online_notification_title">Автоматическое переключение в онлайн</string>
-    <string name="offline_notification_title">Предупреждение об отсутсвии сети</string>
+    <string name="online_notification_title">Уведомлять о доступности сети</string>
+    <string name="offline_notification_title">Предупреждать об отсутсвии сети</string>
     <string name="online_notification_description_on">Получать уведомления когда доступно мобильное соединение</string>
     <string name="offline_notification_description_on">Получать уведомления в случае отсутствия интернет соединения</string>
     <string name="wifi_only_title">Только Wi-Fi соединение</string>
     <string name="wifi_only_description_on">Использовать распознавание через облако только в Wi-Fi режиме</string>
     <string name="notification_category">Уведомления</string>
-    <string name="network_category">Соединение с сетью</string>
+    <string name="network_category">Cеть</string>
     <string name="online_notification_description_off">Не получать уведомления когда доступно мобильное соединение</string>
     <string name="offline_notification_description_off">Не получать уведомления в случае отсутствия интернет соединения</string>
     <string name="wifi_only_description_off">Использовать распознавание через облако в любом режиме</string>
+    <string name="permission_denied_error">Приложение не может продолжить работу без доступа к камере и встроенной памяти устройства</string>
+    <string name="switch_offline_notification_dialog_header">Сеть недоступна</string>
+    <string name="switch_offline_notification_dialog_body">Карта может быть просканирована в оффлайн режиме, однако качество распознавания может значитьно ухудшиться. Продолжить?</string>
+    <string name="switch_online_notification_dialog_header">"Доступно онлайн распознавание "</string>
+    <string name="switch_online_notification_dialog_body">Карта может быть просканирована с использованием облачного сервера. Переключиться в онлайн режим?</string>
 </resources>

@@ -4,6 +4,9 @@ import android.Manifest
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.net.ConnectivityManager
+import android.net.Network
+import android.net.NetworkCapabilities
 import android.os.Bundle
 import android.os.Environment
 import android.util.Log
@@ -16,6 +19,7 @@ import androidx.appcompat.app.ActionBarDrawerToggle
 import android.view.MenuItem
 import android.widget.FrameLayout
 import android.widget.Switch
+import androidx.preference.PreferenceManager
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.app_bar_main.*
 import java.io.File
@@ -23,7 +27,7 @@ import java.io.FileOutputStream
 import java.io.IOException
 
 
-class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
+class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener, ConfirmationDialog.ConfirmationDialogListener {
 
     private lateinit var container: FrameLayout
     private lateinit var fragmentManager: FragmentManager
@@ -31,9 +35,48 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     private lateinit var recognitionFragment: RecognitionFragment
     private lateinit var settingsFragment: SettingsFragment
 
+    private val activityTag = "MAIN_ACTIVITY"
+
+    private var permissionsRequested = false
+
+    override fun onDialogPositiveClick(dialogId: Int) {
+        when (dialogId) {
+            ConfirmationDialogsTypes.PERMISSION_RATIONALE.ordinal -> {
+                requestPermissions(
+                    arrayOf(
+                        Manifest.permission.CAMERA,
+                        Manifest.permission.WRITE_EXTERNAL_STORAGE
+                    ),
+                    REQUEST_STARTUP_PERMISSIONS)
+            }
+            ConfirmationDialogsTypes.NETWORK_SWITCH_ONLINE_NOTIFICATION.ordinal -> {
+                findViewById<NavigationView>(R.id.nav_view).menu.findItem(R.id.nav_offline_switch).
+                    actionView.findViewById<Switch>(R.id.offline_switch).isChecked = false
+                openRecognition()
+            }
+            ConfirmationDialogsTypes.NETWORK_SWITCH_OFFLINE_NOTIFICATION.ordinal -> {
+                findViewById<NavigationView>(R.id.nav_view).menu.findItem(R.id.nav_offline_switch).
+                    actionView.findViewById<Switch>(R.id.offline_switch).isChecked = true
+                openRecognition()
+            }
+        }
+    }
+
+    override fun onDialogNegativeClick(dialogId: Int) {
+        when (dialogId) {
+            ConfirmationDialogsTypes.PERMISSION_RATIONALE.ordinal -> {
+                Log.w(activityTag, "User declines apps permissions")
+                this.finish()
+            }
+            ConfirmationDialogsTypes.NETWORK_SWITCH_ONLINE_NOTIFICATION.ordinal -> {
+                openRecognition()
+            }
+        }
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         initAuthToken()
-        setTheme(R.style.NoActionBar)
+        setTheme(R.style.AppTheme)
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
@@ -99,7 +142,8 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
     private fun checkExternalStorageWritable() {
         if (Environment.getExternalStorageState() != Environment.MEDIA_MOUNTED) {
-            ErrorDialog.newInstance(getString(R.string.external_storage_error))
+            ErrorDialog
+                .newInstance(getString(R.string.external_storage_error))
                 .show(supportFragmentManager, ERROR_DIALOG)
         }
     }
@@ -110,7 +154,8 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         val dir = File(dirName)
         if (!dir.exists()) {
             if (!dir.mkdirs()) {
-                ErrorDialog.newInstance(getString(R.string.external_storage_error))
+                ErrorDialog
+                    .newInstance(getString(R.string.external_storage_error))
                     .show(supportFragmentManager, ERROR_DIALOG)
             }
         }
@@ -165,6 +210,16 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         fragmentTransaction.addToBackStack(null).commit()
     }
 
+    private fun openRecognition(){
+        val fragmentTransaction = fragmentManager.beginTransaction()
+        fragmentTransaction.replace(
+            R.id.fragment_container,
+            recognitionFragment,
+            RECOGNITION_FRAGMENT_TAG
+        )
+        fragmentTransaction.addToBackStack(null).commit()
+    }
+
     private fun moduleModePreparation(){
         val prefs = getSharedPreferences(PREFS, Context.MODE_PRIVATE)
         val offlineSwitch = findViewById<NavigationView>(R.id.nav_view).menu.findItem(R.id.nav_offline_switch).
@@ -182,14 +237,49 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         }
     }
 
-    fun openRecognition(){
-        val fragmentTransaction = fragmentManager.beginTransaction()
-        fragmentTransaction.replace(
-            R.id.fragment_container,
-            recognitionFragment,
-            RECOGNITION_FRAGMENT_TAG
-        )
-        fragmentTransaction.addToBackStack(null).commit()
+    private fun isNetworkAvailable(wifiOnly : Boolean = false): Boolean {
+        val cm = getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        val activeNetwork: Network? = cm.activeNetwork
+        activeNetwork ?: return false
+        if (wifiOnly && !cm.getNetworkCapabilities(activeNetwork).hasTransport(NetworkCapabilities.TRANSPORT_WIFI)){
+            return false
+        }
+        return true
+    }
+
+    fun checkNetworkSettings(){
+        val settingsPrefs = PreferenceManager.getDefaultSharedPreferences(this)
+        val applicationPrefs = getSharedPreferences(PREFS, Context.MODE_PRIVATE)
+        val isOnline = isNetworkAvailable(settingsPrefs.getBoolean("wifi_only_mode", false))
+        if (isOnline &&
+            applicationPrefs.getBoolean(OFFLINE_MODE, false) &&
+            settingsPrefs.getBoolean("internet_enable_notification", false)
+        ) {
+            ConfirmationDialog.newInstance(
+                ConfirmationDialogsTypes.NETWORK_SWITCH_ONLINE_NOTIFICATION.ordinal,
+                getString(R.string.switch_online_notification_dialog_header),
+                getString(R.string.switch_online_notification_dialog_body),
+                getString(R.string.ok),
+                getString(R.string.cancel)
+            ).show(supportFragmentManager, CONFIRMATION_DIALOG)
+            return
+        }
+        if (!isOnline && !applicationPrefs.getBoolean(OFFLINE_MODE, false)){
+            if (settingsPrefs.getBoolean("internet_disable_notification", false)) {
+                    ConfirmationDialog.newInstance(
+                        ConfirmationDialogsTypes.NETWORK_SWITCH_OFFLINE_NOTIFICATION.ordinal,
+                        getString(R.string.switch_offline_notification_dialog_header),
+                        getString(R.string.switch_offline_notification_dialog_body),
+                        getString(R.string.ok),
+                        getString(R.string.cancel)
+                    ).show(supportFragmentManager, CONFIRMATION_DIALOG)
+                    return
+                } else {
+                findViewById<NavigationView>(R.id.nav_view).menu.findItem(R.id.nav_offline_switch).
+                    actionView.findViewById<Switch>(R.id.offline_switch).isChecked = true
+            }
+        }
+        openRecognition()
     }
 
     fun addContact(intent: Intent){
@@ -197,9 +287,20 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     }
 
     fun requestStartupPermission() {
+        if (permissionsRequested) {
+            return
+        } else {
+            permissionsRequested = true
+        }
         if (shouldShowRequestPermissionRationale(Manifest.permission.CAMERA)
             || shouldShowRequestPermissionRationale(Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
-            PermissionRequestConfirmationDialog().apply { isCancelable = false }.show(supportFragmentManager, CONFIRMATION_DIALOG)
+            ConfirmationDialog.newInstance(
+                ConfirmationDialogsTypes.PERMISSION_RATIONALE.ordinal,
+                getString(R.string.camera_access_required_title),
+                getString(R.string.camera_access_required),
+                getString(R.string.ok),
+                getString(R.string.cancel)
+            ).apply { isCancelable = false }.show(supportFragmentManager, CONFIRMATION_DIALOG)
         } else {
             requestPermissions(
                 arrayOf(
@@ -213,6 +314,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     override fun onRequestPermissionsResult(requestCode: Int,
                                             permissions: Array<String>,
                                             grantResults: IntArray) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         when (requestCode) {
             REQUEST_STARTUP_PERMISSIONS -> {
                 var permissionGranted = true
@@ -223,10 +325,8 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                         break
                     }
                 }
-                if (permissionGranted) {
-                    super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-                } else {
-                    ErrorDialog.newInstance(getString(R.string.camera_access_error))
+                if (!permissionGranted) {
+                    ErrorDialog.newInstance(getString(R.string.permission_denied_error))
                         .show(supportFragmentManager, ERROR_DIALOG)
                 }
             }

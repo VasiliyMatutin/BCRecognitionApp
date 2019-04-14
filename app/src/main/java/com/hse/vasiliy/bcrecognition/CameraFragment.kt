@@ -115,7 +115,7 @@ class CameraFragment : Fragment() {
         dstBmp.compress(Bitmap.CompressFormat.PNG, 0, outStream)
         outStream.flush()
         outStream.close()
-        activity.openRecognition()
+        activity.checkNetworkSettings()
     }
 
     private val surfaceTextureListener = object : TextureView.SurfaceTextureListener {

@@ -76,7 +76,7 @@
             app:layout_constraintStart_toStartOf="parent"
             tools:background="@android:color/background_light">
 
-            <Button
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/recognize_submit"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"

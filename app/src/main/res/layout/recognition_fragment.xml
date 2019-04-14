@@ -26,7 +26,7 @@
                 android:id="@+id/card_preview"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:src="@color/colorPrimary" />
+                android:contentDescription="@string/image_description" />
         </FrameLayout>
 
         <ScrollView
@@ -194,5 +194,6 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/recognition_progress_bar"
             app:layout_constraintVertical_bias="0.01999998" />
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

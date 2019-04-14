@@ -4,7 +4,7 @@
     <string name="card_preview_header">Card preview</string>
     <string name="recognized_text_header">Contact information</string>
     <string name="scanning_help_message">Line it up with the frame</string>
-    <string name="scanning_button">Recognize</string>
+    <string name="scanning_button">Scan</string>
     <string name="camera_access_required">Application will close if permissions will not be granted. Request
         permissions?
     </string>
@@ -25,25 +25,31 @@
     <string name="recognition_error">Something goes wrong with recognition module</string>
     <string name="image_description">description</string>
     <string name="contact_name">Name</string>
-    <string name="contact_organization">Organiztion</string>
+    <string name="contact_organization">Organization</string>
     <string name="contact_phone">Phone</string>
     <string name="contact_email">E-mail</string>
     <string name="contact_address">Address</string>
     <string name="add_contact_button">Save</string>
-    <string name="recognition_progress_text">Card processing...</string>
+    <string name="recognition_progress_text">Card processing…</string>
     <string name="offline_switch_name">Offline mode</string>
     <string name="network_connection_setting">Network connection</string>
 
     <!-- TODO: Remove or change this placeholder text -->
-    <string name="online_notification_title">Automatically switch to online</string>
+    <string name="online_notification_title">Notify about online availability</string>
     <string name="offline_notification_title">Warn about offline mode</string>
-    <string name="online_notification_description_on">Recieve notification each time network connection detected</string>
-    <string name="offline_notification_description_on">Recieve notification when network connection is unavailable</string>
+    <string name="online_notification_description_on">Receive notification each time network connection detected</string>
+    <string name="offline_notification_description_on">Receive notification when network connection is unavailable</string>
     <string name="wifi_only_title">Wi-Fi only</string>
     <string name="wifi_only_description_on">Use cloud recognition only over Wi-Fi</string>
     <string name="notification_category">Notification</string>
     <string name="network_category">Network</string>
-    <string name="online_notification_description_off">Do not recieve notification each time network connection detected</string>
-    <string name="offline_notification_description_off">Do not recieve notification when network connection is unavailable</string>
+    <string name="online_notification_description_off">Do not receive notification each time network connection detected</string>
+    <string name="offline_notification_description_off">Do not receive notification when network connection is unavailable</string>
     <string name="wifi_only_description_off">Use cloud recognition over any network</string>
+    <string name="header_branding" translatable="false">Business cards recognition application</string>
+    <string name="permission_denied_error">Application could not function without camera and storage access</string>
+    <string name="switch_offline_notification_dialog_header">No network available</string>
+    <string name="switch_offline_notification_dialog_body">Recognition process may be proceed in offline mode, but recognition quality may significantly degrade. Would you like to continue?</string>
+    <string name="switch_online_notification_dialog_header">Cloud recognition available</string>
+    <string name="switch_online_notification_dialog_body">Application can use an Internet access to recognize this card better. Turn on online recognition mode?</string>
 </resources>

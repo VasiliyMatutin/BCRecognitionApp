@@ -122,13 +122,12 @@ class CardProcessor(context: Context, view: View, private val previewBitmap: Bit
                     var text = ""
                     for (block in firebaseVisionText.textBlocks) text += block.text + "\n"
                     extractedText = text
-                    Log.d("EXTRACTED_TEXT", extractedText)
                     textProcessedLatch.countDown()
                 }
                 .addOnFailureListener {
-                    val mContext = contextRef.get()
-                    if (mContext != null) {
-                        (mContext as MainActivity).showErrorByRequest(mContext.getString(R.string.recognition_error))
+                    val appContext = contextRef.get()
+                    if (appContext != null) {
+                        (appContext as MainActivity).showErrorByRequest(appContext.getString(R.string.recognition_error))
                     } else {
                         Log.e(appTag, it.toString())
                     }
