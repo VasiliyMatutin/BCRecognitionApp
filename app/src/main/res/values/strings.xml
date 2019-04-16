@@ -22,7 +22,7 @@
     <string name="communicate">Communicate</string>
     <string name="share">Share</string>
     <string name="settings_activity_menu_entry">Settings</string>
-    <string name="recognition_error">Something goes wrong with recognition module</string>
+    <string name="recognition_error">Card cannot be processed correctly. Something goes wrong with recognition module</string>
     <string name="image_description">description</string>
     <string name="contact_name">Name</string>
     <string name="contact_organization">Organization</string>
@@ -52,4 +52,7 @@
     <string name="switch_offline_notification_dialog_body">Recognition process may be proceed in offline mode, but recognition quality may significantly degrade. Would you like to continue?</string>
     <string name="switch_online_notification_dialog_header">Cloud recognition available</string>
     <string name="switch_online_notification_dialog_body">Application can use an Internet access to recognize this card better. Turn on online recognition mode?</string>
+    <string name="error_title">Error</string>
+    <string name="warning_title">Warning</string>
+    <string name="textplaceholder">TextPlaceholder</string>
 </resources>

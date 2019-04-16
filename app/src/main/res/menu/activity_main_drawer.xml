@@ -12,7 +12,6 @@
         <item
             android:id="@+id/nav_gallery"
             android:icon="@drawable/ic_menu_gallery"
-            android:enabled="false"
             android:title="@string/saved_unrecognized_cards" />
         <item
             android:id="@+id/nav_settings"

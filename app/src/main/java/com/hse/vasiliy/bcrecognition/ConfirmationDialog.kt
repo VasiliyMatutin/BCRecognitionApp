@@ -54,16 +54,25 @@ class ConfirmationDialog() : DialogFragment() {
 
     companion object{
 
-        fun newInstance(dialogID: Int, title: String, text: String, positiveButtonText: String, negativeButtonText: String) : ConfirmationDialog {
-            val args: Bundle = Bundle()
-            args.putInt(DIALOG_ID, dialogID)
-            args.putString(TITLE_TAG, title)
-            args.putString(TEXT_TAG, text)
-            args.putString(POS_BTN_TEXT_TAG, positiveButtonText)
-            args.putString(NEG_BTN_TEXT_TAG, negativeButtonText)
-            val confirmationDialogInstance = ConfirmationDialog()
-            confirmationDialogInstance.arguments = args
-            return confirmationDialogInstance
+        const val DIALOG_ID = "id"
+        const val TITLE_TAG = "title"
+        const val TEXT_TAG = "text"
+        const val POS_BTN_TEXT_TAG = "positive"
+        const val NEG_BTN_TEXT_TAG = "negative"
+
+        fun newInstance(dialogID: Int,
+                        title: String,
+                        text: String,
+                        positiveButtonText: String,
+                        negativeButtonText: String
+        ) : ConfirmationDialog = ConfirmationDialog().apply {
+            arguments = Bundle().apply{
+                putInt(DIALOG_ID, dialogID)
+                putString(TITLE_TAG, title)
+                putString(TEXT_TAG, text)
+                putString(POS_BTN_TEXT_TAG, positiveButtonText)
+                putString(NEG_BTN_TEXT_TAG, negativeButtonText)
+            }
         }
     }
 }

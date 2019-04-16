@@ -27,13 +27,18 @@ import java.io.FileOutputStream
 import java.io.IOException
 
 
-class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener, ConfirmationDialog.ConfirmationDialogListener {
+class MainActivity :
+    AppCompatActivity(),
+    NavigationView.OnNavigationItemSelectedListener,
+    ConfirmationDialog.ConfirmationDialogListener,
+    CardGalleryFragment.OnListFragmentInteractionListener {
 
     private lateinit var container: FrameLayout
     private lateinit var fragmentManager: FragmentManager
     private lateinit var cameraFragment: CameraFragment
     private lateinit var recognitionFragment: RecognitionFragment
     private lateinit var settingsFragment: SettingsFragment
+    private lateinit var galleryFragment: CardGalleryFragment
 
     private val activityTag = "MAIN_ACTIVITY"
 
@@ -74,6 +79,10 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         }
     }
 
+    override fun onListFragmentInteraction(item: CardGalleryContent.CardContactItem?) {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         initAuthToken()
         setTheme(R.style.AppTheme)
@@ -86,6 +95,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         cameraFragment = CameraFragment()
         recognitionFragment = RecognitionFragment()
         settingsFragment = SettingsFragment()
+        galleryFragment = CardGalleryFragment()
         fragmentTransaction.add(R.id.fragment_container, cameraFragment, CAMERA_FRAGMENT_TAG)
         fragmentTransaction.commit()
 
@@ -127,7 +137,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 openSettings()
             }
             R.id.nav_gallery -> {
-
+                openGallery()
             }
             R.id.nav_offline_switch -> {
                 return true
@@ -206,6 +216,16 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             R.id.fragment_container,
             settingsFragment,
             SETTINGS_FRAGMENT_TAG
+        )
+        fragmentTransaction.addToBackStack(null).commit()
+    }
+
+    private fun openGallery(){
+        val fragmentTransaction = fragmentManager.beginTransaction()
+        fragmentTransaction.replace(
+            R.id.fragment_container,
+            galleryFragment,
+            GALLERY_FRAGMENT_TAG
         )
         fragmentTransaction.addToBackStack(null).commit()
     }
@@ -333,8 +353,8 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         }
     }
 
-    fun showErrorByRequest(errorText: String) {
-        ErrorDialog.newInstance(errorText)
+    fun showErrorByRequest(errorText: String, isCritical: Boolean = true) {
+        ErrorDialog.newInstance(errorText, isCritical)
             .show(supportFragmentManager, ERROR_DIALOG)
     }
 

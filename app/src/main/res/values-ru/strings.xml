@@ -18,7 +18,7 @@
     <string name="communicate">Рассказать о нас</string>
     <string name="share">Поделиться</string>
     <string name="settings_activity_menu_entry">Настройки</string>
-    <string name="recognition_error">Ошибка в модуле распознавания</string>
+    <string name="recognition_error">Карта не может быть обработана корректно. Ошибка в модуле распознавания</string>
     <string name="image_description">description</string>
     <string name="contact_name">Имя</string>
     <string name="contact_organization">Компания</string>
@@ -45,4 +45,7 @@
     <string name="switch_offline_notification_dialog_body">Карта может быть просканирована в оффлайн режиме, однако качество распознавания может значитьно ухудшиться. Продолжить?</string>
     <string name="switch_online_notification_dialog_header">"Доступно онлайн распознавание "</string>
     <string name="switch_online_notification_dialog_body">Карта может быть просканирована с использованием облачного сервера. Переключиться в онлайн режим?</string>
+    <string name="error_title">Ошибка</string>
+    <string name="warning_title">Предупреждение</string>
+    <string name="textplaceholder">TextPlaceholder</string>
 </resources>

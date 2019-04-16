@@ -127,10 +127,9 @@ class CardProcessor(context: Context, view: View, private val previewBitmap: Bit
                 .addOnFailureListener {
                     val appContext = contextRef.get()
                     if (appContext != null) {
-                        (appContext as MainActivity).showErrorByRequest(appContext.getString(R.string.recognition_error))
-                    } else {
-                        Log.e(appTag, it.toString())
+                        (appContext as MainActivity).showErrorByRequest(appContext.getString(R.string.recognition_error), false)
                     }
+                    Log.e(appTag, it.toString())
                     textProcessedLatch.countDown()
                 }
             textProcessedLatch.await()
