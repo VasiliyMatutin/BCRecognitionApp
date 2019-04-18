@@ -37,7 +37,7 @@ class CardProcessor(context: Context, view: View, private val previewBitmap: Bit
     private var emailText = ""
     private var addressText = ""
 
-    private val appTag = "RECOGNITION_ASYNC"
+    private val applicationTag = "RECOGNITION_ASYNC"
 
     override fun onPreExecute() {
         super.onPreExecute()
@@ -53,7 +53,7 @@ class CardProcessor(context: Context, view: View, private val previewBitmap: Bit
                 throw Exception("Activity doesn't exists anymore")
             }
         } catch (exc: Exception) {
-            Log.e(appTag, exc.toString())
+            Log.e(applicationTag, exc.toString())
         }
     }
 
@@ -77,7 +77,7 @@ class CardProcessor(context: Context, view: View, private val previewBitmap: Bit
                 throw Exception("Activity doesn't exists anymore")
             }
         } catch (exc: Exception) {
-            Log.e(appTag, exc.toString())
+            Log.e(applicationTag, exc.toString())
         }
     }
 
@@ -97,7 +97,7 @@ class CardProcessor(context: Context, view: View, private val previewBitmap: Bit
             try {
                 tessBaseApi = TessBaseAPI()
             } catch (exc: Exception) {
-                Log.e(appTag, exc.toString())
+                Log.e(applicationTag, exc.toString())
                 return ""
             }
             if (mContext != null) {
@@ -109,7 +109,7 @@ class CardProcessor(context: Context, view: View, private val previewBitmap: Bit
             try {
                 extractedText = tessBaseApi.utF8Text
             } catch (exc: Exception) {
-                Log.e(appTag, exc.toString())
+                Log.e(applicationTag, exc.toString())
                 return ""
             }
             tessBaseApi.end()
@@ -129,7 +129,7 @@ class CardProcessor(context: Context, view: View, private val previewBitmap: Bit
                     if (appContext != null) {
                         (appContext as MainActivity).showErrorByRequest(appContext.getString(R.string.recognition_error), false)
                     }
-                    Log.e(appTag, it.toString())
+                    Log.e(applicationTag, it.toString())
                     textProcessedLatch.countDown()
                 }
             textProcessedLatch.await()
@@ -182,7 +182,7 @@ class CardProcessor(context: Context, view: View, private val previewBitmap: Bit
                 }
             }
         } catch (exc: Exception) {
-            Log.e(appTag, exc.toString())
+            Log.e(applicationTag, exc.toString())
         }
     }
 
@@ -231,7 +231,7 @@ class CardProcessor(context: Context, view: View, private val previewBitmap: Bit
                 throw Exception("Activity doesn't exists anymore")
             }
         } catch (exc: Exception) {
-            Log.e(appTag, exc.toString())
+            Log.e(applicationTag, exc.toString())
         }
     }
 }

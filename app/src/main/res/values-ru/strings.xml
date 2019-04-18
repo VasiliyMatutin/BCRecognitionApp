@@ -26,7 +26,7 @@
     <string name="contact_email">Электронная почта</string>
     <string name="contact_address">Адрес</string>
     <string name="recognition_progress_text">Распознавание текста…</string>
-    <string name="add_contact_button">Сохранить</string>
+    <string name="add_contact_button">Сохранить в контактах</string>
     <string name="offline_switch_name">Оффлайн режим</string>
     <string name="network_connection_setting">Соединение с сетью</string>
     <string name="online_notification_title">Уведомлять о доступности сети</string>
@@ -48,4 +48,5 @@
     <string name="error_title">Ошибка</string>
     <string name="warning_title">Предупреждение</string>
     <string name="textplaceholder">TextPlaceholder</string>
+    <string name="save_to_gallery_button">Добавить в галлерею</string>
 </resources>

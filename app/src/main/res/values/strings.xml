@@ -29,7 +29,7 @@
     <string name="contact_phone">Phone</string>
     <string name="contact_email">E-mail</string>
     <string name="contact_address">Address</string>
-    <string name="add_contact_button">Save</string>
+    <string name="add_contact_button">Save to contact</string>
     <string name="recognition_progress_text">Card processing…</string>
     <string name="offline_switch_name">Offline mode</string>
     <string name="network_connection_setting">Network connection</string>
@@ -55,4 +55,5 @@
     <string name="error_title">Error</string>
     <string name="warning_title">Warning</string>
     <string name="textplaceholder">TextPlaceholder</string>
+    <string name="save_to_gallery_button">Save to gallery</string>
 </resources>

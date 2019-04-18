@@ -58,9 +58,14 @@ class RecognitionFragment : Fragment() {
         previewBitmap = BitmapFactory.decodeStream(bitmapFile)
 
         cardPreview.setImageBitmap(previewBitmap)
-        val recognizeBtn = view.findViewById(R.id.create_contact_button) as Button
-        recognizeBtn.setOnClickListener{
+        val exportToContactBtn = view.findViewById(R.id.create_contact_button) as Button
+        exportToContactBtn.setOnClickListener{
             createContactButtonClicked()
+        }
+
+        val saveToGalleryBtn = view.findViewById(R.id.save_to_gallery_button) as Button
+        saveToGalleryBtn.setOnClickListener{
+            saveToGalleryButtonClicked()
         }
 
         val task = CardProcessor(attachedActivityContext, view, previewBitmap)
@@ -78,5 +83,15 @@ class RecognitionFragment : Fragment() {
             putExtra(ContactsContract.Intents.Insert.POSTAL, addressText.text.toString())
         }
         activity.addContact(intent)
+    }
+
+    private fun saveToGalleryButtonClicked() {
+        val newItem = CardGalleryContent.CardContactItem(previewBitmap)
+        newItem.setName(nameText.text.toString()).
+            setCompany(organizationText.text.toString()).
+            setPhone(phoneText.text.toString()).
+            setEmail(emailText.text.toString()).
+            setAddress(addressText.text.toString())
+        CardGalleryContent.addItem(newItem)
     }
 }

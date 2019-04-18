@@ -35,7 +35,7 @@ class CardsRecyclerViewAdapter(
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val item = mValues[position]
-        holder.contactTitleView.text = item.content
+        holder.contactTitleView.text = item.getName()
         holder.cardContactImage.setImageBitmap(item.image)
 
         with(holder.mView) {
