@@ -8,7 +8,7 @@
     android:layout_marginBottom="8dp">
 
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/linearLayout"
+        android:id="@+id/card_main_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
@@ -16,7 +16,6 @@
             android:id="@+id/card_image"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="8dp"
             android:contentDescription="@string/image_description"
             app:layout_constraintBottom_toTopOf="@+id/card_title"
             app:layout_constraintEnd_toEndOf="parent"
@@ -29,6 +28,7 @@
             android:layout_width="match_parent"
             android:layout_height="40dp"
             android:text="@string/textplaceholder"
+            android:textAlignment="center"
             android:textColor="@android:color/background_dark"
             android:textSize="24sp"
             app:layout_constraintBottom_toBottomOf="parent"

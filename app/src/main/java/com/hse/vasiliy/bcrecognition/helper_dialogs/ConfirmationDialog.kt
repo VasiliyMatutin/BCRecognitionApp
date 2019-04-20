@@ -1,6 +1,5 @@
-package com.hse.vasiliy.bcrecognition
+package com.hse.vasiliy.bcrecognition.helper_dialogs
 
-import android.Manifest
 import android.app.AlertDialog
 import android.app.Dialog
 import android.os.Bundle

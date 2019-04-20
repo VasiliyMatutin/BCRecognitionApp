@@ -1,4 +1,4 @@
-package com.hse.vasiliy.bcrecognition
+package com.hse.vasiliy.bcrecognition.gallery
 
 import android.graphics.Bitmap
 import android.os.Environment
@@ -10,6 +10,9 @@ import java.io.FileWriter
 import java.io.FileOutputStream
 import java.io.FileReader
 import android.graphics.BitmapFactory
+import com.hse.vasiliy.bcrecognition.CARD_GALLERY_PATH
+import com.hse.vasiliy.bcrecognition.CARD_GALLERY_PATH_IMAGES
+import com.hse.vasiliy.bcrecognition.CARD_GALLERY_PATH_METADATA
 
 
 object CardGalleryContent {
@@ -32,7 +35,7 @@ object CardGalleryContent {
             val files = metadataDir.listFiles()
             for (file in files) {
                 val reader = FileReader(file)
-                val dataItem = GsonBuilder().create().fromJson(reader, ParcelableJsonItem::class.java)
+                val dataItem = GsonBuilder().create().fromJson(reader, CardGalleryContent.ParcelableJsonItem::class.java)
                 reader.close()
                 val imagePath = galleryImagesPath + "/" + dataItem.uniqueID + ".png"
                 if (File(imagePath).exists()) {

@@ -1,9 +1,10 @@
-package com.hse.vasiliy.bcrecognition
+package com.hse.vasiliy.bcrecognition.helper_dialogs
 
 import android.app.AlertDialog
 import android.app.Dialog
 import android.os.Bundle
 import androidx.fragment.app.DialogFragment
+import com.hse.vasiliy.bcrecognition.R
 
 class ErrorDialog() : DialogFragment() {
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {

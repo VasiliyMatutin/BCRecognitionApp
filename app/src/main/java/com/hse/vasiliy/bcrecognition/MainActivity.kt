@@ -19,7 +19,14 @@ import androidx.appcompat.app.ActionBarDrawerToggle
 import android.view.MenuItem
 import android.widget.FrameLayout
 import android.widget.Switch
+import androidx.appcompat.view.ActionMode
 import androidx.preference.PreferenceManager
+import androidx.recyclerview.selection.SelectionTracker
+import com.hse.vasiliy.bcrecognition.gallery.ActionBarOverlay
+import com.hse.vasiliy.bcrecognition.gallery.CardGalleryContent
+import com.hse.vasiliy.bcrecognition.gallery.CardGalleryFragment
+import com.hse.vasiliy.bcrecognition.helper_dialogs.ConfirmationDialog
+import com.hse.vasiliy.bcrecognition.helper_dialogs.ErrorDialog
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.app_bar_main.*
 import java.io.File
@@ -42,6 +49,7 @@ class MainActivity :
 
     private val activityTag = "MAIN_ACTIVITY"
 
+    private var actionMode: ActionMode? = null
     private var permissionsRequested = false
 
     override fun onDialogPositiveClick(dialogId: Int) {
@@ -80,7 +88,23 @@ class MainActivity :
     }
 
     override fun onListFragmentInteraction(item: CardGalleryContent.CardContactItem?) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        //TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
+
+    override fun onSelectedItemsChanged(tracker: SelectionTracker<Long>) {
+        if (tracker.hasSelection() && actionMode == null) {
+            actionMode = startSupportActionMode(ActionBarOverlay(tracker))
+            setSelectedTitle(tracker.selection.size())
+        } else if (!tracker.hasSelection()) {
+            actionMode?.finish()
+            actionMode = null
+        } else {
+            setSelectedTitle(tracker.selection.size())
+        }
+    }
+
+    private fun setSelectedTitle(selected: Int) {
+        actionMode?.title = "Selected: $selected"
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {

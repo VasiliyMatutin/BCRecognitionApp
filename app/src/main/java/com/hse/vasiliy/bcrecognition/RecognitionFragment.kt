@@ -14,6 +14,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import com.google.android.material.textfield.TextInputEditText
+import com.hse.vasiliy.bcrecognition.gallery.CardGalleryContent
 
 
 class RecognitionFragment : Fragment() {
