@@ -7,7 +7,8 @@ import androidx.recyclerview.selection.SelectionTracker
 import com.hse.vasiliy.bcrecognition.R
 
 class ActionBarOverlay (
-    private val tracker: SelectionTracker<*>
+    private val tracker: SelectionTracker<Long>,
+    private val adapter: CardsRecyclerViewAdapter
 ) : ActionMode.Callback {
 
     override fun onCreateActionMode(mode: ActionMode, menu: Menu): Boolean {
@@ -23,6 +24,7 @@ class ActionBarOverlay (
 
     override fun onActionItemClicked(mode: ActionMode, item: MenuItem): Boolean = when (item.itemId) {
         R.id.context_delete -> {
+            adapter.removeAllSelected()
             mode.finish()
             true
         }

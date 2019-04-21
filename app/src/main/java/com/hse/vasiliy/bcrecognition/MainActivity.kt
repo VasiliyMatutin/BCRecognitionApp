@@ -25,6 +25,7 @@ import androidx.recyclerview.selection.SelectionTracker
 import com.hse.vasiliy.bcrecognition.gallery.ActionBarOverlay
 import com.hse.vasiliy.bcrecognition.gallery.CardGalleryContent
 import com.hse.vasiliy.bcrecognition.gallery.CardGalleryFragment
+import com.hse.vasiliy.bcrecognition.gallery.CardsRecyclerViewAdapter
 import com.hse.vasiliy.bcrecognition.helper_dialogs.ConfirmationDialog
 import com.hse.vasiliy.bcrecognition.helper_dialogs.ErrorDialog
 import kotlinx.android.synthetic.main.activity_main.*
@@ -91,9 +92,9 @@ class MainActivity :
         //TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
-    override fun onSelectedItemsChanged(tracker: SelectionTracker<Long>) {
+    override fun onSelectedItemsChanged(tracker: SelectionTracker<Long>, adapter: CardsRecyclerViewAdapter) {
         if (tracker.hasSelection() && actionMode == null) {
-            actionMode = startSupportActionMode(ActionBarOverlay(tracker))
+            actionMode = startSupportActionMode(ActionBarOverlay(tracker, adapter))
             setSelectedTitle(tracker.selection.size())
         } else if (!tracker.hasSelection()) {
             actionMode?.finish()

@@ -10,6 +10,7 @@ import java.io.FileWriter
 import java.io.FileOutputStream
 import java.io.FileReader
 import android.graphics.BitmapFactory
+import androidx.recyclerview.selection.Selection
 import com.hse.vasiliy.bcrecognition.CARD_GALLERY_PATH
 import com.hse.vasiliy.bcrecognition.CARD_GALLERY_PATH_IMAGES
 import com.hse.vasiliy.bcrecognition.CARD_GALLERY_PATH_METADATA
@@ -45,6 +46,7 @@ object CardGalleryContent {
                         val bitmap = BitmapFactory.decodeFile(imagePath, options)
                         val item = CardContactItem(bitmap)
                         item.data = dataItem
+                        item.uniqueID = dataItem.uniqueID
                         ITEMS.add(item)
                     } catch (exc: Exception) {
                         continue
@@ -61,6 +63,19 @@ object CardGalleryContent {
     fun addItem(item : CardContactItem) {
         ITEMS.add(item)
         saveToMemory(item)
+    }
+
+    fun eraseFromMemory(pos : Int){
+        val id = ITEMS[pos].uniqueID
+        Log.d("HEY", "$galleryMetadataPath/$id.json")
+        val metadataFile = File("$galleryMetadataPath/$id.json")
+        if (metadataFile.exists()) {
+            metadataFile.delete()
+        }
+        val imageFile = File("$galleryImagesPath/$id.json")
+        if (imageFile.exists()) {
+            imageFile.delete()
+        }
     }
 
     private fun saveToMemory(item: CardContactItem) {
@@ -81,7 +96,7 @@ object CardGalleryContent {
     }
 
     class CardContactItem(@Transient var image: Bitmap) {
-        val uniqueID = UUID.randomUUID().toString()
+        var uniqueID = UUID.randomUUID().toString()
         var data = ParcelableJsonItem(uniqueID, "<NO_NAME>")
 
         fun setName(name: String): CardContactItem {

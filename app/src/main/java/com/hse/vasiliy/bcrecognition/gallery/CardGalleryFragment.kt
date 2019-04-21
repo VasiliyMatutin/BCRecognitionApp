@@ -67,6 +67,6 @@ class CardGalleryFragment : Fragment() {
 
     interface OnListFragmentInteractionListener {
         fun onListFragmentInteraction(item: CardContactItem?)
-        fun onSelectedItemsChanged(tracker: SelectionTracker<Long>)
+        fun onSelectedItemsChanged(tracker: SelectionTracker<Long>, adapter: CardsRecyclerViewAdapter)
     }
 }

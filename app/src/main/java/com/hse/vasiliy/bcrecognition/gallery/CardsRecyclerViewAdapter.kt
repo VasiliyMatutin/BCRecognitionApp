@@ -2,6 +2,7 @@ package com.hse.vasiliy.bcrecognition.gallery
 
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
+import android.util.Log
 import androidx.recyclerview.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
@@ -19,8 +20,9 @@ import com.hse.vasiliy.bcrecognition.R
 
 import kotlinx.android.synthetic.main.card_contact_representation.view.*
 
+
 class CardsRecyclerViewAdapter(
-    private val mValues: List<CardContactItem>,
+    private val mValues: MutableList<CardContactItem>,
     private val mListener: OnListFragmentInteractionListener?
 ) : RecyclerView.Adapter<CardsRecyclerViewAdapter.ViewHolder>() {
 
@@ -52,7 +54,7 @@ class CardsRecyclerViewAdapter(
             it.addObserver(object : SelectionTracker.SelectionObserver<Any>() {
                 override fun onSelectionChanged() {
                     super.onSelectionChanged()
-                    mListener?.onSelectedItemsChanged(it)
+                    mListener?.onSelectedItemsChanged(it, this@CardsRecyclerViewAdapter)
                 }
             })
         }
@@ -60,6 +62,17 @@ class CardsRecyclerViewAdapter(
         with(holder.mView) {
             tag = item
             setOnClickListener(mOnClickListener)
+        }
+    }
+
+    fun removeAllSelected(){
+        for (i in mValues.size - 1 downTo 0) {
+            if (tracker?.isSelected(i.toLong())!!) {
+                CardGalleryContent.eraseFromMemory(i)
+                mValues.removeAt(i)
+                notifyItemRemoved(i)
+                notifyDataSetChanged()
+            }
         }
     }
 
