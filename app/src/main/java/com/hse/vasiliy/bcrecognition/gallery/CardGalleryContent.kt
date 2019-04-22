@@ -10,10 +10,12 @@ import java.io.FileWriter
 import java.io.FileOutputStream
 import java.io.FileReader
 import android.graphics.BitmapFactory
+import android.os.Parcelable
 import androidx.recyclerview.selection.Selection
 import com.hse.vasiliy.bcrecognition.CARD_GALLERY_PATH
 import com.hse.vasiliy.bcrecognition.CARD_GALLERY_PATH_IMAGES
 import com.hse.vasiliy.bcrecognition.CARD_GALLERY_PATH_METADATA
+import kotlinx.android.parcel.Parcelize
 
 
 object CardGalleryContent {
@@ -129,11 +131,11 @@ object CardGalleryContent {
         }
     }
 
-
+    @Parcelize
     data class ParcelableJsonItem(val uniqueID: String,
                                   var name: String = "",
                                   var company: String = "",
                                   var phone: String = "",
                                   var email: String = "",
-                                  var address: String = "")
+                                  var address: String = "") : Parcelable
 }

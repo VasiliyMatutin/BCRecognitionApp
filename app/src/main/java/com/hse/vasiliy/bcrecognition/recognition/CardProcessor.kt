@@ -1,4 +1,4 @@
-package com.hse.vasiliy.bcrecognition
+package com.hse.vasiliy.bcrecognition.recognition
 
 import android.content.Context
 import android.graphics.Bitmap
@@ -20,14 +20,15 @@ import com.google.api.services.language.v1.model.Document
 import com.google.firebase.ml.vision.FirebaseVision
 import com.google.firebase.ml.vision.common.FirebaseVisionImage
 import com.googlecode.tesseract.android.TessBaseAPI
+import com.hse.vasiliy.bcrecognition.*
+import com.hse.vasiliy.bcrecognition.gallery.CardGalleryContent
 import java.lang.ref.WeakReference
 import java.util.concurrent.CountDownLatch
 
 
-class CardProcessor(context: Context, view: View, private val previewBitmap: Bitmap) : AsyncTask<Void, Void, Void>() {
+class CardProcessor(context: Context, private val previewBitmap: Bitmap) : AsyncTask<Void, Void, Void>() {
 
     private val contextRef = WeakReference(context)
-    private val view = WeakReference(view)
 
     private var isOffline = true
 
@@ -39,24 +40,6 @@ class CardProcessor(context: Context, view: View, private val previewBitmap: Bit
 
     private val applicationTag = "RECOGNITION_ASYNC"
 
-    override fun onPreExecute() {
-        super.onPreExecute()
-        val mView = view.get()
-        try {
-            if (mView != null) {
-                mView.findViewById<ConstraintLayout>(R.id.loading_recognition_view).visibility = View.VISIBLE
-                mView.findViewById<LinearLayout>(R.id.main_recognition_view).visibility = View.INVISIBLE
-
-                cleanupTexts()
-                fillContactVisibleFields()
-            } else {
-                throw Exception("Activity doesn't exists anymore")
-            }
-        } catch (exc: Exception) {
-            Log.e(applicationTag, exc.toString())
-        }
-    }
-
     override fun doInBackground(vararg params: Void?): Void? {
         val extractedText = extractText(previewBitmap)
         analyzeEntities(extractedText)
@@ -65,20 +48,8 @@ class CardProcessor(context: Context, view: View, private val previewBitmap: Bit
     }
 
     override fun onPostExecute(void: Void?) {
-        super.onPreExecute()
-        val mView = view.get()
-        try {
-            if (mView != null) {
-                mView.findViewById<ConstraintLayout>(R.id.loading_recognition_view).visibility = View.INVISIBLE
-                mView.findViewById<LinearLayout>(R.id.main_recognition_view).visibility = View.VISIBLE
-
-                fillContactVisibleFields()
-            } else {
-                throw Exception("Activity doesn't exists anymore")
-            }
-        } catch (exc: Exception) {
-            Log.e(applicationTag, exc.toString())
-        }
+        super.onPostExecute(void)
+        fillContactVisibleFields()
     }
 
     private fun extractText(previewBitmap: Bitmap): String {
@@ -127,7 +98,9 @@ class CardProcessor(context: Context, view: View, private val previewBitmap: Bit
                 .addOnFailureListener {
                     val appContext = contextRef.get()
                     if (appContext != null) {
-                        (appContext as MainActivity).showErrorByRequest(appContext.getString(R.string.recognition_error), false)
+                        (appContext as MainActivity).showErrorByRequest(appContext.getString(
+                            R.string.recognition_error
+                        ), false)
                     }
                     Log.e(applicationTag, it.toString())
                     textProcessedLatch.countDown()
@@ -210,23 +183,19 @@ class CardProcessor(context: Context, view: View, private val previewBitmap: Bit
         }
     }
 
-    private fun cleanupTexts() {
-        nameText = ""
-        organizationText = ""
-        phoneText = ""
-        emailText = ""
-        addressText = ""
-    }
-
     private fun fillContactVisibleFields() {
-        val mView = view.get()
+        val mContext = contextRef.get()
         try {
-            if (mView != null) {
-                mView.findViewById<TextInputEditText>(R.id.name_edit_text).setText(nameText)
-                mView.findViewById<TextInputEditText>(R.id.organization_edit_text).setText(organizationText)
-                mView.findViewById<TextInputEditText>(R.id.phone_edit_text).setText(phoneText)
-                mView.findViewById<TextInputEditText>(R.id.email_edit_text).setText(emailText)
-                mView.findViewById<TextInputEditText>(R.id.address_edit_text).setText(addressText)
+            if (mContext != null) {
+                val tmpRecognizedInfo = CardGalleryContent.ParcelableJsonItem("none",
+                    nameText,
+                    organizationText,
+                    phoneText,
+                    emailText,
+                    addressText
+                )
+
+                (mContext as MainActivity).openEditing(true, tmpRecognizedInfo)
             } else {
                 throw Exception("Activity doesn't exists anymore")
             }

@@ -22,12 +22,10 @@ import android.widget.Switch
 import androidx.appcompat.view.ActionMode
 import androidx.preference.PreferenceManager
 import androidx.recyclerview.selection.SelectionTracker
-import com.hse.vasiliy.bcrecognition.gallery.ActionBarOverlay
-import com.hse.vasiliy.bcrecognition.gallery.CardGalleryContent
-import com.hse.vasiliy.bcrecognition.gallery.CardGalleryFragment
-import com.hse.vasiliy.bcrecognition.gallery.CardsRecyclerViewAdapter
+import com.hse.vasiliy.bcrecognition.gallery.*
 import com.hse.vasiliy.bcrecognition.helper_dialogs.ConfirmationDialog
 import com.hse.vasiliy.bcrecognition.helper_dialogs.ErrorDialog
+import com.hse.vasiliy.bcrecognition.recognition.RecognitionFragment
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.app_bar_main.*
 import java.io.File
@@ -47,6 +45,8 @@ class MainActivity :
     private lateinit var recognitionFragment: RecognitionFragment
     private lateinit var settingsFragment: SettingsFragment
     private lateinit var galleryFragment: CardGalleryFragment
+    private lateinit var contactInfoFragment: ContactInfoFragment
+    private lateinit var editingFragment: EditingFragment
 
     private val activityTag = "MAIN_ACTIVITY"
 
@@ -88,8 +88,8 @@ class MainActivity :
         }
     }
 
-    override fun onListFragmentInteraction(item: CardGalleryContent.CardContactItem?) {
-        //TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    override fun onListFragmentInteraction(pos: Int) {
+        openContactInfo(pos)
     }
 
     override fun onSelectedItemsChanged(tracker: SelectionTracker<Long>, adapter: CardsRecyclerViewAdapter) {
@@ -121,6 +121,8 @@ class MainActivity :
         recognitionFragment = RecognitionFragment()
         settingsFragment = SettingsFragment()
         galleryFragment = CardGalleryFragment()
+        contactInfoFragment = ContactInfoFragment()
+        editingFragment = EditingFragment()
         fragmentTransaction.add(R.id.fragment_container, cameraFragment, CAMERA_FRAGMENT_TAG)
         fragmentTransaction.commit()
 
@@ -245,16 +247,6 @@ class MainActivity :
         fragmentTransaction.addToBackStack(null).commit()
     }
 
-    private fun openGallery(){
-        val fragmentTransaction = fragmentManager.beginTransaction()
-        fragmentTransaction.replace(
-            R.id.fragment_container,
-            galleryFragment,
-            GALLERY_FRAGMENT_TAG
-        )
-        fragmentTransaction.addToBackStack(null).commit()
-    }
-
     private fun openRecognition(){
         val fragmentTransaction = fragmentManager.beginTransaction()
         fragmentTransaction.replace(
@@ -262,6 +254,19 @@ class MainActivity :
             recognitionFragment,
             RECOGNITION_FRAGMENT_TAG
         )
+        fragmentTransaction.addToBackStack(null).commit()
+    }
+
+    private fun openContactInfo(num : Int){
+        val fragmentTransaction = fragmentManager.beginTransaction()
+        fragmentTransaction.replace(
+            R.id.fragment_container,
+            contactInfoFragment,
+            CONTACT_INFO_FRAGMENT_TAG
+        )
+        val bundle = Bundle()
+        bundle.putInt(POSITION, num)
+        contactInfoFragment.arguments = bundle
         fragmentTransaction.addToBackStack(null).commit()
     }
 
@@ -290,6 +295,35 @@ class MainActivity :
             return false
         }
         return true
+    }
+
+    fun openGallery(){
+        val fragmentTransaction = fragmentManager.beginTransaction()
+        fragmentTransaction.replace(
+            R.id.fragment_container,
+            galleryFragment,
+            GALLERY_FRAGMENT_TAG
+        )
+        fragmentTransaction.addToBackStack(null).commit()
+    }
+
+    fun openEditing(isFromRecognition : Boolean = false, info : CardGalleryContent.ParcelableJsonItem? = null) {
+        val fragmentTransaction = fragmentManager.beginTransaction()
+        fragmentTransaction.replace(
+            R.id.fragment_container,
+            editingFragment,
+            EDITING_FRAGMENT_TAG
+        )
+        if (info != null) {
+            val bundle = Bundle()
+            bundle.putParcelable(PARCELABLE_ITEM, info)
+            editingFragment.arguments = bundle
+        }
+        if (isFromRecognition) {
+            fragmentManager.popBackStack()
+        }
+        fragmentTransaction.addToBackStack(null).commit()
+        editingFragment.upResetFlag()
     }
 
     fun checkNetworkSettings(){

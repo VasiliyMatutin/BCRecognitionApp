@@ -31,7 +31,7 @@ class CardsRecyclerViewAdapter(
 
     init {
         mOnClickListener = View.OnClickListener { v ->
-            val item = v.tag as CardContactItem
+            val item = v.tag as Int
             mListener?.onListFragmentInteraction(item)
         }
         setHasStableIds(true)
@@ -60,7 +60,7 @@ class CardsRecyclerViewAdapter(
         }
 
         with(holder.mView) {
-            tag = item
+            tag = position
             setOnClickListener(mOnClickListener)
         }
     }

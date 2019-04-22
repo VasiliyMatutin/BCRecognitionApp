@@ -1,4 +1,4 @@
-package com.hse.vasiliy.bcrecognition
+package com.hse.vasiliy.bcrecognition.gallery
 
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
@@ -13,16 +13,21 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import android.widget.TextView
 import com.google.android.material.textfield.TextInputEditText
-import com.hse.vasiliy.bcrecognition.gallery.CardGalleryContent
+import com.hse.vasiliy.bcrecognition.BITMAP_TMP
+import com.hse.vasiliy.bcrecognition.MainActivity
+import com.hse.vasiliy.bcrecognition.PARCELABLE_ITEM
+import com.hse.vasiliy.bcrecognition.R
 
 
-class RecognitionFragment : Fragment() {
+class EditingFragment : Fragment() {
 
     private lateinit var attachedActivityContext: Context
     private lateinit var activity: MainActivity
 
-    private var applicationTag = "RecognitionFragment"
+    private var applicationTag = "EditingFragment"
+    private var isNeedToReset = false
 
     private lateinit var cardPreview: ImageView
     private lateinit var previewBitmap: Bitmap
@@ -46,7 +51,7 @@ class RecognitionFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        val view = inflater.inflate(R.layout.recognition_fragment, container, false)
+        val view = inflater.inflate(R.layout.editing_fragment, container, false)
         nameText = view.findViewById(R.id.name_edit_text)
         organizationText = view.findViewById(R.id.organization_edit_text)
         phoneText = view.findViewById(R.id.phone_edit_text)
@@ -59,6 +64,7 @@ class RecognitionFragment : Fragment() {
         previewBitmap = BitmapFactory.decodeStream(bitmapFile)
 
         cardPreview.setImageBitmap(previewBitmap)
+
         val exportToContactBtn = view.findViewById(R.id.create_contact_button) as Button
         exportToContactBtn.setOnClickListener{
             createContactButtonClicked()
@@ -69,9 +75,29 @@ class RecognitionFragment : Fragment() {
             saveToGalleryButtonClicked()
         }
 
-        val task = CardProcessor(attachedActivityContext, view, previewBitmap)
-        task.execute()
         return view
+    }
+
+    override fun onResume() {
+        super.onResume()
+        if (isNeedToReset) {
+            var item: CardGalleryContent.ParcelableJsonItem? = null
+            if (arguments != null) {
+                item = arguments!!.getParcelable(PARCELABLE_ITEM)
+            }
+            if (item != null) {
+                nameText.setText(item.name)
+                organizationText.setText(item.company)
+                phoneText.setText(item.phone)
+                emailText.setText(item.email)
+                addressText.setText(item.address)
+            }
+            isNeedToReset = false
+        }
+    }
+
+    fun upResetFlag() {
+        isNeedToReset = true
     }
 
     private fun createContactButtonClicked() {
@@ -94,5 +120,6 @@ class RecognitionFragment : Fragment() {
             setEmail(emailText.text.toString()).
             setAddress(addressText.text.toString())
         CardGalleryContent.addItem(newItem)
+        activity.openGallery()
     }
 }
