@@ -69,12 +69,11 @@ object CardGalleryContent {
 
     fun eraseFromMemory(pos : Int){
         val id = ITEMS[pos].uniqueID
-        Log.d("HEY", "$galleryMetadataPath/$id.json")
         val metadataFile = File("$galleryMetadataPath/$id.json")
         if (metadataFile.exists()) {
             metadataFile.delete()
         }
-        val imageFile = File("$galleryImagesPath/$id.json")
+        val imageFile = File("$galleryImagesPath/$id.png")
         if (imageFile.exists()) {
             imageFile.delete()
         }

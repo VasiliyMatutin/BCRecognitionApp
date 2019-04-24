@@ -13,7 +13,6 @@ import androidx.recyclerview.selection.SelectionTracker
 import androidx.recyclerview.selection.StableIdKeyProvider
 import androidx.recyclerview.selection.StorageStrategy
 
-import com.hse.vasiliy.bcrecognition.gallery.CardGalleryContent.CardContactItem
 import com.hse.vasiliy.bcrecognition.R
 
 class CardGalleryFragment : Fragment() {
