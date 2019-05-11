@@ -2,6 +2,7 @@ package com.hse.vasiliy.bcrecognition.gallery
 
 import android.content.Context
 import android.content.Intent
+import android.graphics.Bitmap
 import android.os.Bundle
 import android.provider.ContactsContract
 import android.util.Log
@@ -12,6 +13,7 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
+import com.hse.vasiliy.bcrecognition.BITMAP_TMP
 import com.hse.vasiliy.bcrecognition.MainActivity
 
 import com.hse.vasiliy.bcrecognition.R
@@ -32,6 +34,8 @@ class ContactInfoFragment : Fragment() {
     private lateinit var emailText: TextView
     private lateinit var addressText: TextView
 
+    private var num = 0
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -50,10 +54,16 @@ class ContactInfoFragment : Fragment() {
         exportToContactBtn.setOnClickListener{
             createContactButtonClicked()
         }
+
+        val editContactBtn = view.findViewById(R.id.edit_contact) as Button
+        editContactBtn.setOnClickListener{
+            editContactButtonClicked()
+        }
         return view
     }
 
     private fun setupCardInfo(num: Int) {
+        this.num = num
         val item = CardGalleryContent.ITEMS[num]
         cardPreview.setImageBitmap(item.image)
         nameText.text = item.data.name
@@ -73,6 +83,14 @@ class ContactInfoFragment : Fragment() {
             putExtra(ContactsContract.Intents.Insert.POSTAL, addressText.text.toString())
         }
         activity.addContact(intent)
+    }
+
+    private fun editContactButtonClicked() {
+        val outStream = activity.openFileOutput(BITMAP_TMP, Context.MODE_PRIVATE)
+        CardGalleryContent.ITEMS[num].image.compress(Bitmap.CompressFormat.PNG, 0, outStream)
+        outStream.flush()
+        outStream.close()
+        activity.openEditing(false, CardGalleryContent.ITEMS[num].data)
     }
 
     override fun onAttach(context: Context) {

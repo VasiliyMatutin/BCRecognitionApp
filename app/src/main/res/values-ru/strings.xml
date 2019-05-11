@@ -50,4 +50,5 @@
     <string name="textplaceholder">TextPlaceholder</string>
     <string name="save_to_gallery_button">Добавить в галлерею</string>
     <string name="edit_button_text">Изменить</string>
+    <string name="save_contact_edit">Сохранить</string>
 </resources>

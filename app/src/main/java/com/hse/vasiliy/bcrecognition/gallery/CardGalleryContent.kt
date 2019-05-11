@@ -96,6 +96,15 @@ object CardGalleryContent {
         }
     }
 
+    fun rewriteElement(item: ParcelableJsonItem) {
+        val metadataFilePath = galleryMetadataPath + "/" + item.uniqueID + ".json"
+        FileWriter(metadataFilePath).use { writer ->
+            val gson = GsonBuilder().create()
+            gson.toJson(item, writer)
+            writer.close()
+        }
+    }
+
     class CardContactItem(@Transient var image: Bitmap) {
         var uniqueID = UUID.randomUUID().toString()
         var data = ParcelableJsonItem(uniqueID, "<NO_NAME>")

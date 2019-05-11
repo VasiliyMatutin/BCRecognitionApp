@@ -23,6 +23,9 @@ import androidx.appcompat.view.ActionMode
 import androidx.preference.PreferenceManager
 import androidx.recyclerview.selection.SelectionTracker
 import com.hse.vasiliy.bcrecognition.gallery.*
+import com.hse.vasiliy.bcrecognition.gallery.editing.EditingFragment
+import com.hse.vasiliy.bcrecognition.gallery.editing.InitialEditingFragment
+import com.hse.vasiliy.bcrecognition.gallery.editing.SavedCardEditingFragment
 import com.hse.vasiliy.bcrecognition.helper_dialogs.ConfirmationDialog
 import com.hse.vasiliy.bcrecognition.helper_dialogs.ErrorDialog
 import com.hse.vasiliy.bcrecognition.recognition.RecognitionFragment
@@ -47,6 +50,8 @@ class MainActivity :
     private lateinit var galleryFragment: CardGalleryFragment
     private lateinit var contactInfoFragment: ContactInfoFragment
     private lateinit var editingFragment: EditingFragment
+    private lateinit var initEditingFragment: InitialEditingFragment
+    private lateinit var repeatedEditingFragment: SavedCardEditingFragment
 
     private val activityTag = "MAIN_ACTIVITY"
 
@@ -122,7 +127,8 @@ class MainActivity :
         settingsFragment = SettingsFragment()
         galleryFragment = CardGalleryFragment()
         contactInfoFragment = ContactInfoFragment()
-        editingFragment = EditingFragment()
+        initEditingFragment = InitialEditingFragment()
+        repeatedEditingFragment = SavedCardEditingFragment()
         fragmentTransaction.add(R.id.fragment_container, cameraFragment, CAMERA_FRAGMENT_TAG)
         fragmentTransaction.commit()
 
@@ -308,6 +314,11 @@ class MainActivity :
     }
 
     fun openEditing(isFromRecognition : Boolean = false, info : CardGalleryContent.ParcelableJsonItem? = null) {
+        if (isFromRecognition) {
+            editingFragment = initEditingFragment
+        } else {
+            editingFragment = repeatedEditingFragment
+        }
         val fragmentTransaction = fragmentManager.beginTransaction()
         fragmentTransaction.replace(
             R.id.fragment_container,
