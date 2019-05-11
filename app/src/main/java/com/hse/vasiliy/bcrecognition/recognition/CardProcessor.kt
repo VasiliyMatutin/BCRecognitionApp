@@ -4,10 +4,6 @@ import android.content.Context
 import android.graphics.Bitmap
 import android.os.AsyncTask
 import android.util.Log
-import android.view.View
-import android.widget.LinearLayout
-import androidx.constraintlayout.widget.ConstraintLayout
-import com.google.android.material.textfield.TextInputEditText
 import com.google.api.client.googleapis.auth.oauth2.GoogleCredential
 import com.google.api.client.http.HttpRequestInitializer
 import com.google.api.client.http.javanet.NetHttpTransport

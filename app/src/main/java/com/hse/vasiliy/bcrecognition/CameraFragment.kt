@@ -14,6 +14,7 @@ import androidx.fragment.app.Fragment
 import android.util.Log
 import java.util.*
 import android.hardware.camera2.CaptureRequest
+import android.os.SystemClock.sleep
 import android.view.*
 import android.view.ViewGroup
 import android.view.LayoutInflater
@@ -38,6 +39,9 @@ class CameraFragment : Fragment() {
     private lateinit var previewRequestBuilder: CaptureRequest.Builder
     private var mCameraDevice: CameraDevice? = null
     private var captureSession: CameraCaptureSession? = null
+    private var isFlashSupported = false
+    private var isFlashRequired = false
+    private var captureState = STATE_PREVIEW
 
     //overridden callbacks for camera
     private val cameraCallbacks = object : CameraDevice.StateCallback() {
@@ -56,6 +60,62 @@ class CameraFragment : Fragment() {
             onDisconnected(cameraDevice)
             Log.e(applicationTag, "Camera error")
             activity.showErrorByRequest(getString(R.string.camera_access_error))
+        }
+    }
+
+    private val captureCallback = object : CameraCaptureSession.CaptureCallback() {
+
+        private fun process(result: CaptureResult) {
+            when (captureState) {
+                STATE_PREVIEW -> Unit
+                STATE_WAITING_LOCK -> capturePicture(result)
+                STATE_WAITING_PRE_CAPTURE -> {
+                    val aeState = result.get(CaptureResult.CONTROL_AE_STATE)
+                    if (aeState == CaptureRequest.CONTROL_AE_STATE_FLASH_REQUIRED) {
+                        captureState = STATE_WAITING_NON_PRE_CAPTURE
+                        isFlashRequired = true
+                    } else if (aeState == null ||
+                        aeState == CaptureResult.CONTROL_AE_STATE_PRECAPTURE) {
+                        captureState = STATE_WAITING_NON_PRE_CAPTURE
+                    }
+                }
+                STATE_WAITING_NON_PRE_CAPTURE -> {
+                    val aeState = result.get(CaptureResult.CONTROL_AE_STATE)
+                    if (aeState == null || aeState != CaptureResult.CONTROL_AE_STATE_PRECAPTURE) {
+                        captureState = STATE_PICTURE_TAKEN
+                        captureStillPicture()
+                    }
+                }
+            }
+        }
+
+        private fun capturePicture(result: CaptureResult) {
+            val afState = result.get(CaptureResult.CONTROL_AF_STATE)
+            if (afState == null) {
+                captureState = STATE_PICTURE_TAKEN
+                captureStillPicture()
+            } else if (afState == CaptureResult.CONTROL_AF_STATE_FOCUSED_LOCKED
+                || afState == CaptureResult.CONTROL_AF_STATE_NOT_FOCUSED_LOCKED) {
+                val aeState = result.get(CaptureResult.CONTROL_AE_STATE)
+                if (aeState == null || aeState == CaptureResult.CONTROL_AE_STATE_CONVERGED) {
+                    captureState = STATE_PICTURE_TAKEN
+                    captureStillPicture()
+                } else {
+                    runPreCaptureSequence()
+                }
+            }
+        }
+
+        override fun onCaptureProgressed(session: CameraCaptureSession,
+                                         request: CaptureRequest,
+                                         partialResult: CaptureResult) {
+            process(partialResult)
+        }
+
+        override fun onCaptureCompleted(session: CameraCaptureSession,
+                                        request: CaptureRequest,
+                                        result: TotalCaptureResult) {
+            process(result)
         }
     }
 
@@ -90,7 +150,7 @@ class CameraFragment : Fragment() {
         super.onResume()
         startBackgroundThread()
         if (cameraView.isAvailable) {
-            loadCamera(cameraView.width, cameraView.height)
+            loadCamera()
         } else {
             cameraView.surfaceTextureListener = surfaceTextureListener
         }
@@ -103,19 +163,7 @@ class CameraFragment : Fragment() {
     }
 
     private fun recognizeButtonClicked() {
-        val srcBitmap = cameraView.bitmap
-        val dstBmp = Bitmap.createBitmap(
-            srcBitmap,
-            0,
-            topBorder.height,
-            mLayout.width,
-            mLayout.height - topBorder.height - lowerBorder.height
-        )
-        val outStream = activity.openFileOutput(BITMAP_TMP, Context.MODE_PRIVATE)
-        dstBmp.compress(Bitmap.CompressFormat.PNG, 0, outStream)
-        outStream.flush()
-        outStream.close()
-        activity.checkNetworkSettings()
+        lockFocus()
     }
 
     private val surfaceTextureListener = object : TextureView.SurfaceTextureListener {
@@ -123,13 +171,12 @@ class CameraFragment : Fragment() {
         override fun onSurfaceTextureUpdated(surface: SurfaceTexture?) = Unit
         override fun onSurfaceTextureDestroyed(surface: SurfaceTexture?) = true
         override fun onSurfaceTextureAvailable(texture: SurfaceTexture, width: Int, height: Int) {
-            loadCamera(width, height)
+            loadCamera()
         }
     }
 
-    private fun loadCamera(width: Int,
-                           height: Int) {
-        setCameraSettings(width, height)
+    private fun loadCamera() {
+        setCameraSettings()
 
         if (ContextCompat.checkSelfPermission(attachedActivityContext, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
             activity.requestStartupPermission()
@@ -147,14 +194,12 @@ class CameraFragment : Fragment() {
         mCameraDevice = null
     }
 
-    private fun setCameraSettings(width: Int,
-                                  height: Int){ //TODO: use device resolution for preview instead of const definition
+    private fun setCameraSettings(){
         val mCameraManager = attachedActivityContext.getSystemService(Context.CAMERA_SERVICE) as CameraManager
         try {
             //iterate trough all cameras available on this device
             for (camera in mCameraManager.cameraIdList) {
                 val mCharacteristics = mCameraManager.getCameraCharacteristics(camera)
-                val map = mCharacteristics.get(CameraCharacteristics.SCALER_STREAM_CONFIGURATION_MAP) ?: continue
 
                 val cameraFacing = mCharacteristics.get(CameraCharacteristics.LENS_FACING)
                 //skip all cameras that faces the same direction as the device's screen
@@ -162,7 +207,10 @@ class CameraFragment : Fragment() {
                     continue
                 }
 
+                isFlashSupported = mCharacteristics.get(CameraCharacteristics.FLASH_INFO_AVAILABLE) == true
                 cameraId = camera
+
+                return
             }
         } catch (exc: CameraAccessException) {
             Log.e(applicationTag, exc.toString())
@@ -174,7 +222,7 @@ class CameraFragment : Fragment() {
         try {
 
             val cameraWindow = cameraView.surfaceTexture
-            cameraWindow.setDefaultBufferSize(1920, 1080) //TODO:eliminate const
+            cameraWindow.setDefaultBufferSize(1920, 1080)
             val surface = Surface(cameraWindow)
 
             previewRequestBuilder = mCameraDevice!!.createCaptureRequest(
@@ -191,8 +239,10 @@ class CameraFragment : Fragment() {
 
                         captureSession = cameraCaptureSession
                         try {
-                            val previewRequest = previewRequestBuilder.build()
-                            captureSession?.setRepeatingRequest(previewRequest, null, backgroundHandler)
+                            previewRequestBuilder.set(CaptureRequest.CONTROL_AF_MODE,
+                                CaptureRequest.CONTROL_AF_MODE_CONTINUOUS_PICTURE)
+                            setAutoFlash(previewRequestBuilder)
+                            captureSession?.setRepeatingRequest(previewRequestBuilder.build(), captureCallback, backgroundHandler)
                         } catch (exc: CameraAccessException) {
                             Log.e(applicationTag, exc.toString())
                             activity.showErrorByRequest(getString(R.string.camera_access_error))
@@ -225,6 +275,115 @@ class CameraFragment : Fragment() {
         } catch (exc: InterruptedException) {
             Log.e(applicationTag, exc.toString())
         }
+    }
 
+    private fun lockFocus() {
+        try {
+            previewRequestBuilder.set(CaptureRequest.CONTROL_AF_TRIGGER,
+                CameraMetadata.CONTROL_AF_TRIGGER_START)
+            captureState = STATE_WAITING_LOCK
+            captureSession?.capture(previewRequestBuilder.build(), captureCallback,
+                backgroundHandler)
+        } catch (e: CameraAccessException) {
+            Log.e(applicationTag, e.toString())
+        }
+
+    }
+
+    private fun runPreCaptureSequence() {
+        try {
+            previewRequestBuilder.set(CaptureRequest.CONTROL_AE_PRECAPTURE_TRIGGER,
+                CaptureRequest.CONTROL_AE_PRECAPTURE_TRIGGER_START)
+            captureState = STATE_WAITING_PRE_CAPTURE
+            captureSession?.capture(previewRequestBuilder.build(), captureCallback,
+                backgroundHandler)
+        } catch (e: CameraAccessException) {
+            Log.e(applicationTag, e.toString())
+        }
+
+    }
+
+    private fun captureStillPicture() {
+        try {
+            if (isFlashSupported && isFlashRequired) {
+                turnOnFlash()
+                isFlashRequired = false
+            } else {
+                finishImageCapturing()
+            }
+        } catch (e: CameraAccessException) {
+            Log.e(applicationTag, e.toString())
+        }
+    }
+
+    private fun cropBitmapToCard() {
+        val srcBitmap = cameraView.bitmap
+        val dstBmp = Bitmap.createBitmap(
+            srcBitmap,
+            0,
+            topBorder.height,
+            mLayout.width,
+            mLayout.height - topBorder.height - lowerBorder.height
+        )
+        val outStream = activity.openFileOutput(BITMAP_TMP, Context.MODE_PRIVATE)
+        dstBmp.compress(Bitmap.CompressFormat.PNG, 0, outStream)
+        outStream.flush()
+        outStream.close()
+    }
+
+
+    private fun finishImageCapturing() {
+        cropBitmapToCard()
+        try {
+            previewRequestBuilder.set(CaptureRequest.CONTROL_AF_TRIGGER,
+                CameraMetadata.CONTROL_AF_TRIGGER_CANCEL)
+            setAutoFlash(previewRequestBuilder)
+            captureSession?.capture(previewRequestBuilder.build(), captureCallback,
+                backgroundHandler)
+            activity.checkNetworkSettings()
+        } catch (e: CameraAccessException) {
+            Log.e(applicationTag, e.toString())
+        }
+
+    }
+
+    private fun turnOnFlash(){
+        val finalCaptureCallback = object : CameraCaptureSession.CaptureCallback() {
+
+            override fun onCaptureCompleted(
+                session: CameraCaptureSession,
+                request: CaptureRequest,
+                result: TotalCaptureResult
+            ) {
+                finishImageCapturing()
+            }
+        }
+        previewRequestBuilder.set(CaptureRequest.CONTROL_AE_MODE,
+            CaptureRequest.CONTROL_AE_MODE_ON)
+        previewRequestBuilder.set(CaptureRequest.FLASH_MODE,
+            CameraMetadata.FLASH_MODE_TORCH)
+        captureSession?.setRepeatingRequest(previewRequestBuilder.build(), captureCallback,
+            backgroundHandler)
+        sleep(500) //flash requires some time to adjust its brightness level
+        captureSession?.stopRepeating()
+        captureSession?.capture(previewRequestBuilder.build(), finalCaptureCallback,
+            backgroundHandler)
+    }
+
+
+    private fun setAutoFlash(requestBuilder: CaptureRequest.Builder) {
+        if (isFlashSupported) {
+            requestBuilder.set(CaptureRequest.CONTROL_AE_MODE,
+                CaptureRequest.CONTROL_AE_MODE_ON_AUTO_FLASH)
+        }
+    }
+
+    companion object {
+
+        private const val STATE_PREVIEW = 0
+        private const val STATE_WAITING_LOCK = 1
+        private const val STATE_WAITING_PRE_CAPTURE = 2
+        private const val STATE_WAITING_NON_PRE_CAPTURE = 3
+        private const val STATE_PICTURE_TAKEN = 4
     }
 }
