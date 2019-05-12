@@ -30,4 +30,16 @@
             android:icon="@drawable/ic_wifi_black_24dp"/>
     </PreferenceCategory>
 
+    <PreferenceCategory
+        android:title="@string/language_category">
+        <ListPreference
+            android:key="offline_language"
+            android:title="@string/offline_language_selector_title"
+            android:summary="@string/offline_language_selector_summary"
+            android:defaultValue="en"
+            android:entries="@array/offline_language_names_array"
+            android:entryValues="@array/offline_language_values_array"
+            android:icon="@drawable/ic_language_black_24dp"/>
+    </PreferenceCategory>
+
 </androidx.preference.PreferenceScreen>

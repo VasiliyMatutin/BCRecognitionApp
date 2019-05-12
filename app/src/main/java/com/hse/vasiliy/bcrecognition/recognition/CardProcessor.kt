@@ -4,6 +4,7 @@ import android.content.Context
 import android.graphics.Bitmap
 import android.os.AsyncTask
 import android.util.Log
+import androidx.preference.PreferenceManager
 import com.google.api.client.googleapis.auth.oauth2.GoogleCredential
 import com.google.api.client.http.HttpRequestInitializer
 import com.google.api.client.http.javanet.NetHttpTransport
@@ -68,13 +69,22 @@ class CardProcessor(context: Context, private val previewBitmap: Bitmap) : Async
                 return ""
             }
             if (mContext != null) {
-                tessBaseApi.init("${mContext.getExternalFilesDir(null)}", "eng")
+                val settingsPrefs = PreferenceManager.getDefaultSharedPreferences(mContext)
+                when (settingsPrefs.getString("offline_language", "en")){
+                    "en" -> {
+                        tessBaseApi.init("${mContext.getExternalFilesDir(null)}", "eng")
+                    }
+                    "ru" -> {
+                        tessBaseApi.init("${mContext.getExternalFilesDir(null)}", "rus+eng")
+                    }
+                }
             } else {
                 throw Exception("Cannot get access to application dir")
             }
             tessBaseApi.setImage(previewBitmap)
             try {
                 extractedText = tessBaseApi.utF8Text
+                Log.d(applicationTag, extractedText.toString())
             } catch (exc: Exception) {
                 Log.e(applicationTag, exc.toString())
                 return ""

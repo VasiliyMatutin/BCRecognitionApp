@@ -20,10 +20,10 @@
     <string name="camera_activity_menu_entry">Scan card</string>
     <string name="saved_unrecognized_cards">Cards gallery</string>
     <string name="communicate">Communicate</string>
-    <string name="share">Share</string>
+    <string name="contact">Email us</string>
     <string name="settings_activity_menu_entry">Settings</string>
     <string name="recognition_error">Card cannot be processed correctly. Something goes wrong with recognition module</string>
-    <string name="image_description">description</string>
+    <string name="image_description" translatable="false">description</string>
     <string name="contact_name">Name</string>
     <string name="contact_organization">Company</string>
     <string name="contact_phone">Phone</string>
@@ -58,7 +58,10 @@
     <string name="save_to_gallery_button">Save to gallery</string>
 
     <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="hello_blank_fragment" translatable="false">Hello blank fragment</string>
     <string name="edit_button_text">Edit</string>
     <string name="save_contact_edit">Save</string>
+    <string name="language_category">Language</string>
+    <string name="offline_language_selector_title">Offline mode language</string>
+    <string name="offline_language_selector_summary">Choose language that will be used for card recognition in offline mode</string>
 </resources>

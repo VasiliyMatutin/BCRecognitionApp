@@ -32,9 +32,9 @@
         <menu>
             <item
                 android:id="@+id/nav_share"
-                android:icon="@drawable/ic_menu_share"
+                android:icon="@drawable/ic_email_black_24dp"
                 android:enabled="false"
-                android:title="@string/share" />
+                android:title="@string/contact" />
         </menu>
     </item>
 

@@ -16,10 +16,9 @@
     <string name="camera_activity_menu_entry">Распознавание</string>
     <string name="saved_unrecognized_cards">Галлерея визиток</string>
     <string name="communicate">Рассказать о нас</string>
-    <string name="share">Поделиться</string>
+    <string name="contact">Напишите нам</string>
     <string name="settings_activity_menu_entry">Настройки</string>
     <string name="recognition_error">Карта не может быть обработана корректно. Ошибка в модуле распознавания</string>
-    <string name="image_description">description</string>
     <string name="contact_name">Имя</string>
     <string name="contact_organization">Компания</string>
     <string name="contact_phone">Телефон</string>
@@ -51,4 +50,7 @@
     <string name="save_to_gallery_button">Добавить в галлерею</string>
     <string name="edit_button_text">Изменить</string>
     <string name="save_contact_edit">Сохранить</string>
+    <string name="language_category">Язык</string>
+    <string name="offline_language_selector_title">Язык в оффлайн режиме</string>
+    <string name="offline_language_selector_summary">Выберите язык для распознавания карточек в оффлайн режиме</string>
 </resources>
