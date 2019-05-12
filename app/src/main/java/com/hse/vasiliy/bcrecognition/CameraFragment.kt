@@ -14,11 +14,13 @@ import androidx.fragment.app.Fragment
 import android.util.Log
 import java.util.*
 import android.hardware.camera2.CaptureRequest
+import android.media.Image
 import android.os.SystemClock.sleep
 import android.view.*
 import android.view.ViewGroup
 import android.view.LayoutInflater
 import android.widget.Button
+import android.widget.ImageView
 
 
 class CameraFragment : Fragment() {
@@ -29,6 +31,7 @@ class CameraFragment : Fragment() {
     private var applicationTag = "CameraFragment"
 
     private lateinit var cameraView: TextureView
+    private lateinit var flashSwitch: ImageView
     private lateinit var mLayout: View
     private lateinit var topBorder: View
     private lateinit var lowerBorder: View
@@ -140,6 +143,15 @@ class CameraFragment : Fragment() {
         lowerBorder = view.findViewById(R.id.lower_border)
         cameraView = view.findViewById(R.id.camera_view)
 
+        flashSwitch = view.findViewById(R.id.flash_switcher) as ImageView
+        flashSwitch.setOnClickListener{
+            flashSwitchClicked()
+        }
+
+        if (!activity.getSharedPreferences(PREFS, Context.MODE_PRIVATE).getBoolean(AUTO_FLASH, true)) {
+            flashSwitch.setImageResource(R.drawable.ic_flash_off_gray_24dp)
+        }
+
         val recognizeBtn = view.findViewById(R.id.recognize_submit) as Button
         recognizeBtn.setOnClickListener{
             recognizeButtonClicked()
@@ -165,6 +177,24 @@ class CameraFragment : Fragment() {
 
     private fun recognizeButtonClicked() {
         lockFocus()
+    }
+
+    private fun flashSwitchClicked() {
+        val appPrefs = activity.getSharedPreferences(PREFS, Context.MODE_PRIVATE)
+        val isFlashAuto = appPrefs.getBoolean(AUTO_FLASH, true)
+        if (isFlashAuto) {
+            flashSwitch.setImageResource(R.drawable.ic_flash_off_gray_24dp)
+
+        } else {
+            flashSwitch.setImageResource(R.drawable.ic_flash_auto_gray_24dp)
+        }
+        with (appPrefs.edit()) {
+            putBoolean(AUTO_FLASH, !isFlashAuto)
+            apply()
+        }
+        setAutoFlash(previewRequestBuilder)
+        captureSession?.setRepeatingRequest(previewRequestBuilder.build(), captureCallback,
+            backgroundHandler)
     }
 
     private val surfaceTextureListener = object : TextureView.SurfaceTextureListener {
@@ -378,8 +408,17 @@ class CameraFragment : Fragment() {
 
     private fun setAutoFlash(requestBuilder: CaptureRequest.Builder) {
         if (isFlashSupported) {
-            requestBuilder.set(CaptureRequest.CONTROL_AE_MODE,
-                CaptureRequest.CONTROL_AE_MODE_ON_AUTO_FLASH)
+            if (activity.getSharedPreferences(PREFS, Context.MODE_PRIVATE).getBoolean(AUTO_FLASH, true)) {
+                requestBuilder.set(
+                    CaptureRequest.CONTROL_AE_MODE,
+                    CaptureRequest.CONTROL_AE_MODE_ON_AUTO_FLASH
+                )
+            } else {
+                requestBuilder.set(
+                    CaptureRequest.CONTROL_AE_MODE,
+                    CaptureRequest.CONTROL_AE_MODE_ON
+                )
+            }
         }
     }
 

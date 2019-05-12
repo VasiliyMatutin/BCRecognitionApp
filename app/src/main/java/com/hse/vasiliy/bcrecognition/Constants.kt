@@ -22,6 +22,7 @@ const val CONTACT_INFO_FRAGMENT_TAG = "GALLERY_FRAGMENT"
 const val PREFS = "ActivityStorage"
 const val PREF_ACCESS_TOKEN = "access_token"
 const val OFFLINE_MODE = "offline_mode"
+const val AUTO_FLASH = "auto_flash"
 const val POSITION = "position"
 const val PARCELABLE_ITEM = "parcelable_item"
 
