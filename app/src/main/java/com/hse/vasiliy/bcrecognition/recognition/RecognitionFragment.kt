@@ -4,20 +4,14 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.os.Bundle
 import android.content.Context
-import android.content.Intent
-import android.provider.ContactsContract
-import android.widget.ImageView
 import androidx.fragment.app.Fragment
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
-import com.google.android.material.textfield.TextInputEditText
 import com.hse.vasiliy.bcrecognition.BITMAP_TMP
 import com.hse.vasiliy.bcrecognition.MainActivity
 import com.hse.vasiliy.bcrecognition.R
-import com.hse.vasiliy.bcrecognition.gallery.CardGalleryContent
 
 
 class RecognitionFragment : Fragment() {

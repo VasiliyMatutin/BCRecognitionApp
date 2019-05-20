@@ -1,4 +1,4 @@
-package com.hse.vasiliy.bcrecognition
+package com.hse.vasiliy.bcrecognition.recognition
 
 import android.Manifest
 import android.content.Context
@@ -14,13 +14,13 @@ import androidx.fragment.app.Fragment
 import android.util.Log
 import java.util.*
 import android.hardware.camera2.CaptureRequest
-import android.media.Image
 import android.os.SystemClock.sleep
 import android.view.*
 import android.view.ViewGroup
 import android.view.LayoutInflater
 import android.widget.Button
 import android.widget.ImageView
+import com.hse.vasiliy.bcrecognition.*
 
 
 class CameraFragment : Fragment() {
@@ -76,17 +76,20 @@ class CameraFragment : Fragment() {
                 STATE_WAITING_PRE_CAPTURE -> {
                     val aeState = result.get(CaptureResult.CONTROL_AE_STATE)
                     if (aeState == CaptureRequest.CONTROL_AE_STATE_FLASH_REQUIRED) {
-                        captureState = STATE_WAITING_NON_PRE_CAPTURE
+                        captureState =
+                            STATE_WAITING_NON_PRE_CAPTURE
                         isFlashRequired = true
                     } else if (aeState == null ||
                         aeState == CaptureResult.CONTROL_AE_STATE_PRECAPTURE) {
-                        captureState = STATE_WAITING_NON_PRE_CAPTURE
+                        captureState =
+                            STATE_WAITING_NON_PRE_CAPTURE
                     }
                 }
                 STATE_WAITING_NON_PRE_CAPTURE -> {
                     val aeState = result.get(CaptureResult.CONTROL_AE_STATE)
                     if (aeState == null || aeState != CaptureResult.CONTROL_AE_STATE_PRECAPTURE) {
-                        captureState = STATE_PICTURE_TAKEN
+                        captureState =
+                            STATE_PICTURE_TAKEN
                         captureStillPicture()
                     }
                 }
@@ -102,7 +105,8 @@ class CameraFragment : Fragment() {
                 || afState == CaptureResult.CONTROL_AF_STATE_NOT_FOCUSED_LOCKED) {
                 val aeState = result.get(CaptureResult.CONTROL_AE_STATE)
                 if (aeState == null || aeState == CaptureResult.CONTROL_AE_STATE_CONVERGED) {
-                    captureState = STATE_PICTURE_TAKEN
+                    captureState =
+                        STATE_PICTURE_TAKEN
                     captureStillPicture()
                 } else {
                     runPreCaptureSequence()

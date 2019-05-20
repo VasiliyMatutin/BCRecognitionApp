@@ -28,6 +28,7 @@ import com.hse.vasiliy.bcrecognition.gallery.editing.InitialEditingFragment
 import com.hse.vasiliy.bcrecognition.gallery.editing.SavedCardEditingFragment
 import com.hse.vasiliy.bcrecognition.helper_dialogs.ConfirmationDialog
 import com.hse.vasiliy.bcrecognition.helper_dialogs.ErrorDialog
+import com.hse.vasiliy.bcrecognition.recognition.CameraFragment
 import com.hse.vasiliy.bcrecognition.recognition.RecognitionFragment
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.app_bar_main.*
